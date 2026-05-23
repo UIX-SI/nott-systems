@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>nott — Easy modules for every SI project (preview 2026-05-23)</title>
+<!--
+  nott — 단일 HTML 미리보기
+  Version: 2026-05-23
+
+  npm 없이 더블클릭만으로 브라우저에서 바로 열립니다.
+  실제 개발 버전은 src/nott_05_23_v2.jsx 를 보세요.
+-->
+<style>
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --line: #e2e8f0;
+    --line-strong: #cbd5e1;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #64748b;
+    --ink-4: #94a3b8;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Pretendard, "Noto Sans KR", sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
+
+  header { display: flex; justify-content: space-between; align-items: center; padding: 16px 0 24px; }
+  .logo { font-size: 28px; font-weight: 900; letter-spacing: -0.02em; }
+  .logo-sub { font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+  .head-pill { background: #fff; border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; font-size: 12px; color: var(--ink-3); }
+
+  main { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+  @media (max-width: 1024px) { main { grid-template-columns: 1fr; } }
+
+  .card { background: #fff; border-radius: 28px; padding: 28px; border: 1px solid var(--line); }
+  .badge { display: inline-flex; gap: 6px; align-items: center; background: #f1f5f9; padding: 4px 10px; border-radius: 999px; font-size: 12px; color: var(--ink-2); margin-bottom: 12px; }
+  .h1 { font-size: 44px; font-weight: 900; letter-spacing: -0.025em; line-height: 1.1; margin: 0; max-width: 720px; }
+  .h1-sub { font-size: 16px; line-height: 1.7; color: var(--ink-3); margin-top: 16px; max-width: 640px; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 32px; margin-bottom: 24px; }
+  .step { background: #f8fafc; border: 1px solid var(--line); border-radius: 20px; padding: 18px; cursor: pointer; transition: all 0.15s; text-align: left; }
+  .step:hover { transform: translateY(-1px); }
+  .step.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .step-num { font-size: 12px; opacity: 0.6; }
+  .step-ttl { font-size: 16px; font-weight: 700; margin-top: 18px; }
+  .step-sub { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 22px; }
+  .h2 { font-size: 22px; font-weight: 800; margin: 0 0 4px; }
+  .h2-sub { font-size: 14px; color: var(--ink-3); margin: 0 0 18px; }
+
+  /* 고객사 그리드 */
+  .co-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  @media (max-width: 900px) { .co-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 600px) { .co-grid { grid-template-columns: repeat(2, 1fr); } }
+  .co { border: 2px solid var(--line); border-radius: 16px; padding: 14px; cursor: pointer; background: #fff; transition: all 0.15s; text-align: left; }
+  .co:hover { transform: translateY(-2px); border-color: var(--line-strong); }
+  .co-badge { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; margin-bottom: 18px; }
+  .co-name { font-size: 14px; font-weight: 700; }
+  .co-mono { font-size: 11px; color: var(--ink-3); margin-top: 2px; font-family: var(--mono); letter-spacing: 0.02em; }
+
+  /* 서비스 그리드 */
+  .sv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (max-width: 700px) { .sv-grid { grid-template-columns: 1fr; } }
+  .sv { border: 1px solid var(--line); border-radius: 16px; padding: 16px; cursor: pointer; background: #fff; transition: all 0.15s; text-align: left; }
+  .sv:hover { transform: translateY(-2px); border-color: var(--line-strong); }
+  .sv-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .sv-name { font-size: 17px; font-weight: 800; }
+  .sv-tag { font-size: 11px; font-weight: 700; color: var(--ink-4); margin-top: 2px; }
+  .sv-desc { font-size: 13px; color: var(--ink-3); margin-top: 10px; line-height: 1.6; }
+  .ep { display: inline-block; margin-top: 10px; background: var(--ink); color: #fff; padding: 4px 8px; border-radius: 6px; font-family: var(--mono); font-size: 11px; }
+
+  /* 프리뷰 단계 */
+  .row { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-ghost { background: #f1f5f9; border: 0; padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-out { background: #fff; border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-fill { color: #fff; border: 0; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+
+  .pv-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .pv-row { grid-template-columns: 1fr; } }
+  .pv-card { padding: 22px; border-radius: 24px; border: 1px solid var(--line); }
+  .pv-top { display: flex; justify-content: space-between; align-items: center; }
+  .pv-logo { padding: 10px 14px; border-radius: 12px; font-weight: 900; font-size: 13px; }
+  .pv-pill { background: #fff; padding: 6px 12px; border-radius: 999px; font-size: 11px; color: var(--ink-3); border: 1px solid var(--line); font-family: var(--mono); }
+  .pv-co { font-size: 13px; font-weight: 700; margin-top: 36px; }
+  .pv-name { font-size: 36px; font-weight: 900; margin-top: 8px; letter-spacing: -0.02em; }
+  .pv-tag { font-size: 13px; font-weight: 600; color: var(--ink-3); margin-top: 4px; }
+  .pv-desc { font-size: 14px; color: var(--ink-3); margin-top: 14px; line-height: 1.7; }
+  .pv-ep { display: inline-block; background: var(--ink); color: #fff; padding: 4px 8px; border-radius: 6px; font-family: var(--mono); font-size: 11px; margin-top: 14px; }
+  .pv-btn { display: block; padding: 12px 18px; border-radius: 999px; font-weight: 800; font-size: 13px; margin-top: 18px; }
+  .pv-cells { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 22px; }
+  .pv-cell { background: #fff; padding: 12px; border-radius: 14px; text-align: center; font-size: 13px; font-weight: 800; border: 1px solid var(--line); }
+
+  .code { background: #0f172a; color: #e2e8f0; border-radius: 22px; padding: 16px; }
+  .code-head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+  .code pre { margin: 0; font-family: var(--mono); font-size: 11px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 380px; overflow: auto; }
+
+  /* 사이드 */
+  aside { background: #0f172a; color: #fff; border-radius: 28px; padding: 24px; height: fit-content; }
+  .a-h { display: flex; align-items: center; gap: 8px; color: #cbd5e1; font-size: 13px; }
+  .a-pv-wrap { background: #fff; color: var(--ink); margin-top: 18px; border-radius: 24px; overflow: hidden; }
+  .a-setup { background: rgba(255,255,255,0.06); padding: 16px; border-radius: 18px; margin-top: 18px; }
+  .a-setup-h { font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+  .a-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 12px; }
+  .a-row:last-child { border: 0; }
+  .a-row .l { color: #94a3b8; }
+  .a-row .v { font-weight: 700; }
+  .a-row .mono { font-family: var(--mono); font-size: 11px; }
+  .a-foot { text-align: center; font-size: 11px; color: #64748b; margin-top: 16px; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div>
+      <div class="logo">nott</div>
+      <div class="logo-sub">Easy modules for every SI project</div>
+    </div>
+    <div class="head-pill">nott-llm · slm · stt · rag · ocr · dashboard</div>
+  </header>
+
+  <main>
+    <section class="card">
+      <span class="badge">✦ Minimal SI starter platform</span>
+      <h1 class="h1">반복 개발을 줄이고, 고객사별 AI 모듈을 바로 만든다.</h1>
+      <p class="h1-sub">대기업 로고를 고르고, 서비스를 고르면, 해당 고객사 테마가 적용된 프리뷰와 소스코드 세트를 바로 생성합니다.</p>
+
+      <div class="steps" id="steps">
+        <button class="step active" data-step="1">
+          <div class="step-num">01</div>
+          <div class="step-ttl">고객사 선택</div>
+          <div class="step-sub">LG / 삼성 / 현대 / 롯데 / 한화 / SK / KT / 포스코 / 신세계 / 카카오 / 네이버</div>
+        </button>
+        <button class="step" data-step="2">
+          <div class="step-num">02</div>
+          <div class="step-ttl">서비스 선택</div>
+          <div class="step-sub">nott-llm / slm / stt / rag / ocr / dashboard</div>
+        </button>
+        <button class="step" data-step="3">
+          <div class="step-num">03</div>
+          <div class="step-ttl">프리뷰 / 다운로드</div>
+          <div class="step-sub">테마 적용 화면 + 소스코드(zip)</div>
+        </button>
+      </div>
+
+      <div class="panel" id="panel"></div>
+    </section>
+
+    <aside>
+      <div class="a-h">👁 &nbsp;Live Preview</div>
+      <div class="a-pv-wrap" id="aside-preview"></div>
+      <div class="a-setup">
+        <div class="a-setup-h">Current Setup</div>
+        <div class="a-row"><span class="l">Company</span><span class="v" id="info-co">-</span></div>
+        <div class="a-row"><span class="l">Service</span><span class="v" id="info-sv">-</span></div>
+        <div class="a-row"><span class="l">Package</span><span class="v mono" id="info-pkg">-</span></div>
+        <div class="a-row"><span class="l">Endpoint</span><span class="v mono" id="info-ep">-</span></div>
+        <div class="a-row"><span class="l">Theme</span><span class="v mono" id="info-tm">-</span></div>
+      </div>
+      <div class="a-foot">nott — Easy AI for every SI · preview v2 (2026-05-23)</div>
+    </aside>
+  </main>
+</div>
+
+<script>
+const companies = [
+  { id:"lg",        name:"LG",       logoText:"LG",        color:"#A50034", bg:"#FFF5F8", txt:"#fff" },
+  { id:"samsung",   name:"삼성",     logoText:"SAMSUNG",   color:"#1428A0", bg:"#F3F6FF", txt:"#fff" },
+  { id:"hyundai",   name:"현대",     logoText:"HYUNDAI",   color:"#002C5F", bg:"#F1F6FB", txt:"#fff" },
+  { id:"lotte",     name:"롯데",     logoText:"LOTTE",     color:"#E60012", bg:"#FFF3F4", txt:"#fff" },
+  { id:"hanwha",    name:"한화",     logoText:"HANWHA",    color:"#FF6600", bg:"#FFF6EE", txt:"#fff" },
+  { id:"sk",        name:"SK",       logoText:"SK",        color:"#EA002C", bg:"#FFF2F4", txt:"#fff" },
+  { id:"kt",        name:"KT",       logoText:"KT",        color:"#E60012", bg:"#FFF2F4", txt:"#fff" },
+  { id:"posco",     name:"포스코",   logoText:"POSCO",     color:"#0072CE", bg:"#F0F7FF", txt:"#fff" },
+  { id:"shinsegae", name:"신세계",   logoText:"SHINSEGAE", color:"#B8000F", bg:"#FFF4F5", txt:"#fff" },
+  { id:"kakao",     name:"카카오",   logoText:"KAKAO",     color:"#FEE500", bg:"#FFFBE5", txt:"#000" },
+  { id:"naver",     name:"네이버",   logoText:"NAVER",     color:"#03C75A", bg:"#EFFBF4", txt:"#fff" }
+];
+
+const services = [
+  { id:"llm",       pkg:"nott-llm",       tagline:"Easy LLM",       desc:"사내 문서·업무 데이터·프로젝트 지식을 연결하는 기본 LLM 모듈",         endpoint:"POST /api/llm/chat",          sample:{messages:[{role:"user",content:"안녕"}]} },
+  { id:"slm",       pkg:"nott-slm",       tagline:"Easy SLM",       desc:"현장·내부망·저비용 환경에 붙이기 쉬운 경량 AI 모델 모듈",            endpoint:"POST /api/slm/chat",          sample:{prompt:"현장 점검 결과 요약"} },
+  { id:"stt",       pkg:"nott-stt",       tagline:"Easy STT",       desc:"회의록·상담·현장 음성을 텍스트로 바꾸는 음성인식 모듈",              endpoint:"POST /api/stt/transcribe",    sample:{audio:"<base64>",language:"ko"} },
+  { id:"rag",       pkg:"nott-rag",       tagline:"Easy RAG",       desc:"PDF·문서·매뉴얼 검색 기반 답변을 위한 RAG 모듈",                     endpoint:"POST /api/rag/query",         sample:{query:"환불 규정",topK:5} },
+  { id:"ocr",       pkg:"nott-ocr",       tagline:"Easy OCR",       desc:"계약서·영수증·공문 이미지 속 텍스트 추출 모듈",                      endpoint:"POST /api/ocr/extract",       sample:{image:"<base64>",fields:["date","amount"]} },
+  { id:"dashboard", pkg:"nott-dashboard", tagline:"Easy Dashboard", desc:"고객사 컬러·로고가 적용되는 운영 대시보드 모듈",                     endpoint:"GET /api/dashboard/metrics",  sample:{range:"7d"} }
+];
+
+const state = { step: 1, company: companies[0], service: services[0] };
+const panel = document.getElementById("panel");
+const asidePreview = document.getElementById("aside-preview");
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+function genCode(co, sv){
+  const comp = sv.id.charAt(0).toUpperCase()+sv.id.slice(1)+"Preview";
+  return `// Generated by nott — Easy modules for every SI project
+// Package : ${sv.pkg}
+// Client  : ${co.name} (${co.logoText})
+// Endpoint: ${sv.endpoint}
+
+import React from "react";
+
+const API_ENDPOINT = "${sv.endpoint}";
+
+export default function ${comp}() {
+  const theme = {
+    company: "${co.name}",
+    logoText: "${co.logoText}",
+    primaryColor: "${co.color}",
+    background: "${co.bg}",
+    serviceName: "${sv.pkg}",
+    serviceTagline: "${sv.tagline}",
+    serviceDescription: "${sv.desc}"
+  };
+
+  const callApi = async () => {
+    const [method, path] = API_ENDPOINT.split(" ");
+    const res = await fetch(path, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(${JSON.stringify(sv.sample)})
+    });
+    return res.json();
+  };
+
+  return (
+    <main style={{ minHeight: "100vh", background: theme.background, padding: 40 }}>
+      <section style={{ maxWidth: 960, margin: "0 auto", background: "white", borderRadius: 24, padding: 32 }}>
+        <div style={{ color: theme.primaryColor, fontWeight: 800, fontSize: 22 }}>{theme.logoText}</div>
+        <h1 style={{ fontSize: 42, marginTop: 32 }}>{theme.serviceName}</h1>
+        <p style={{ color: theme.primaryColor, fontWeight: 700 }}>{theme.serviceTagline}</p>
+        <p style={{ color: "#64748b", marginTop: 16 }}>{theme.serviceDescription}</p>
+        <div style={{ marginTop: 20, padding: 14, background: "#0f172a", color: "#e2e8f0", borderRadius: 10, fontFamily: "monospace", fontSize: 12 }}>{API_ENDPOINT}</div>
+        <button onClick={callApi} style={{ marginTop: 22, background: theme.primaryColor, color: "white", border: 0, borderRadius: 999, padding: "14px 22px", fontWeight: 700 }}>
+          Start with {theme.company}
+        </button>
+      </section>
+    </main>
+  );
+}`;
+}
+
+function setStep(n){
+  state.step = n;
+  document.querySelectorAll(".step").forEach(el => {
+    el.classList.toggle("active", parseInt(el.dataset.step) === n);
+  });
+  render();
+}
+
+function renderAsidePreview(){
+  const co = state.company, sv = state.service;
+  asidePreview.innerHTML = `
+    <div class="pv-card" style="background:${co.bg};border:0">
+      <div class="pv-top">
+        <div class="pv-logo" style="background:${co.color};color:${co.txt}">${esc(co.logoText)}</div>
+        <div class="pv-pill">${esc(sv.pkg)}</div>
+      </div>
+      <div class="pv-co" style="color:${co.color}">${esc(co.name)} Preview</div>
+      <div class="pv-name">${esc(sv.pkg)}</div>
+      <div class="pv-tag">${esc(sv.tagline)}</div>
+      <div class="pv-desc">${esc(sv.desc)}</div>
+      <div class="pv-ep">${esc(sv.endpoint)}</div>
+      <div class="pv-btn" style="background:${co.color};color:${co.txt};text-align:center">Start ${esc(sv.pkg)}</div>
+      <div class="pv-cells">
+        <div class="pv-cell">API</div>
+        <div class="pv-cell">UI</div>
+        <div class="pv-cell">CODE</div>
+      </div>
+    </div>
+  `;
+  document.getElementById("info-co").textContent = co.name;
+  document.getElementById("info-sv").textContent = sv.pkg;
+  document.getElementById("info-pkg").textContent = sv.pkg;
+  document.getElementById("info-ep").textContent = sv.endpoint;
+  document.getElementById("info-tm").textContent = co.color;
+}
+
+function render(){
+  renderAsidePreview();
+
+  if(state.step === 1){
+    panel.innerHTML = `
+      <div class="h2">고객사를 선택하세요</div>
+      <p class="h2-sub">로고를 클릭하면 다음 단계로 넘어갑니다. 사이드의 Live Preview는 선택에 따라 즉시 바뀝니다.</p>
+      <div class="co-grid" id="co-grid"></div>
+    `;
+    const grid = document.getElementById("co-grid");
+    companies.forEach(co => {
+      const selected = state.company.id === co.id;
+      const el = document.createElement("button");
+      el.className = "co";
+      el.style.borderColor = selected ? co.color : "var(--line)";
+      el.style.background = selected ? co.bg : "#fff";
+      el.innerHTML = `
+        <div class="co-badge" style="background:${co.color};color:${co.txt}">${esc(co.name.slice(0,2))}</div>
+        <div class="co-name">${esc(co.name)}</div>
+        <div class="co-mono">${esc(co.logoText)}</div>
+      `;
+      el.addEventListener("click", () => { state.company = co; setStep(2); });
+      grid.appendChild(el);
+    });
+  }
+  else if(state.step === 2){
+    panel.innerHTML = `
+      <div class="row">
+        <div>
+          <div class="h2">서비스를 선택하세요</div>
+          <p class="h2-sub">선택 고객사: <strong style="color:${state.company.color}">${esc(state.company.name)}</strong></p>
+        </div>
+        <button class="btn-ghost" id="back-1">고객사 변경</button>
+      </div>
+      <div class="sv-grid" id="sv-grid"></div>
+    `;
+    document.getElementById("back-1").addEventListener("click", () => setStep(1));
+    const grid = document.getElementById("sv-grid");
+    services.forEach(sv => {
+      const el = document.createElement("button");
+      el.className = "sv";
+      el.innerHTML = `
+        <div class="sv-head">
+          <div>
+            <div class="sv-name">${esc(sv.pkg)}</div>
+            <div class="sv-tag">${esc(sv.tagline)}</div>
+          </div>
+          <span style="font-size:18px;color:var(--ink-4)">→</span>
+        </div>
+        <div class="sv-desc">${esc(sv.desc)}</div>
+        <div class="ep">${esc(sv.endpoint)}</div>
+      `;
+      el.addEventListener("click", () => { state.service = sv; setStep(3); });
+      grid.appendChild(el);
+    });
+  }
+  else {
+    const co = state.company, sv = state.service;
+    panel.innerHTML = `
+      <div class="row">
+        <div>
+          <div class="h2">프리뷰 생성 완료</div>
+          <p class="h2-sub">${esc(co.name)} · ${esc(sv.pkg)} · <span style="font-family:var(--mono);font-size:12px">${esc(sv.endpoint)}</span></p>
+        </div>
+        <div class="btns">
+          <button class="btn-ghost" id="back-2">서비스 변경</button>
+          <button class="btn-out" id="dl-jsx">⬇ jsx만</button>
+          <button class="btn-fill" id="dl-zip" style="background:${co.color};color:${co.txt}">📦 Starter ZIP</button>
+        </div>
+      </div>
+      <div class="pv-row">
+        <div class="pv-card" style="background:${co.bg}">
+          <div class="pv-top">
+            <div class="pv-logo" style="background:${co.color};color:${co.txt}">${esc(co.logoText)}</div>
+            <div class="pv-pill">${esc(sv.pkg)}</div>
+          </div>
+          <div class="pv-co" style="color:${co.color}">${esc(co.name)} Preview</div>
+          <div class="pv-name">${esc(sv.pkg)}</div>
+          <div class="pv-tag">${esc(sv.tagline)}</div>
+          <div class="pv-desc">${esc(sv.desc)}</div>
+          <div class="pv-ep">${esc(sv.endpoint)}</div>
+          <div class="pv-btn" style="background:${co.color};color:${co.txt};text-align:center">Start ${esc(sv.pkg)}</div>
+          <div class="pv-cells">
+            <div class="pv-cell">API</div>
+            <div class="pv-cell">UI</div>
+            <div class="pv-cell">CODE</div>
+          </div>
+        </div>
+        <div class="code">
+          <div class="code-head"><span>⌘ Generated Source</span><span>${esc(co.id)}-${esc(sv.pkg)}.jsx</span></div>
+          <pre id="code-pre"></pre>
+        </div>
+      </div>
+    `;
+    document.getElementById("code-pre").textContent = genCode(co, sv);
+    document.getElementById("back-2").addEventListener("click", () => setStep(2));
+    document.getElementById("dl-jsx").addEventListener("click", () => {
+      const blob = new Blob([genCode(co, sv)], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `${co.id}-${sv.pkg}.jsx`; a.click();
+      URL.revokeObjectURL(url);
+    });
+    document.getElementById("dl-zip").addEventListener("click", () => {
+      alert("Starter ZIP은 실제 앱(npm run dev)에서만 동작합니다.\n이 단일 HTML은 미리보기 전용이에요.\n\nZIP 다운로드를 쓰려면:\n  cd C:\\Dev\\nott\n  npm install\n  npm run dev");
+    });
+  }
+}
+
+document.querySelectorAll(".step").forEach(el => {
+  el.addEventListener("click", () => setStep(parseInt(el.dataset.step)));
+});
+
+render();
+</script>
+
+</body>
+</html>

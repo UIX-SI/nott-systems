@@ -1,0 +1,692 @@
+import React, { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import JSZip from "jszip";
+import {
+  Download,
+  ArrowRight,
+  Sparkles,
+  Code2,
+  Eye,
+  Package,
+} from "lucide-react";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// nott — Easy modules for every SI project
+// Version: 2026-05-23 (v3)
+//
+// v2 → v3 변경점:
+//  - 신세계 / 카카오 / 네이버 3개사 제거 (요구사항)
+//  - 최종 8개사: LG / 삼성 / 현대 / 롯데 / 한화 / SK / KT / 포스코
+//  - 카카오 전용 텍스트 색 분기 로직 제거 (불필요해짐)
+//  - 고객사 그리드 컬럼 수 조정 (sm:3 / md:4 / xl:4)
+//  - 우상단 헤더 알약(서비스 리스트) 제거 — 헤더는 로고 + 태그라인만
+//  - 텍스트 "nott" → 실제 가로형 로고 SVG로 교체
+//  - 사이드 푸터에 nott 심볼 추가
+// ─────────────────────────────────────────────────────────────────────────────
+
+// 가로형 로고 (헤더용)
+function NottLogo({ height = 36 }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 17 132.73 30.29"
+      height={height}
+      role="img"
+      aria-label="nott"
+    >
+      <rect fill="#ff595f" y="29.94" width="12.94" height="17.35" />
+      <polygon fill="#ff595f" points="30.83 17 30.83 47.29 17.89 47.29 17.89 29.94 12.94 29.94 12.94 17 30.83 17" />
+      <path fill="#02aa5e" d="M34.94,17v30.29h29.55v-30.29h-29.55ZM52.48,35.03h-5.54v-5.78h5.54v5.78Z" />
+      <polygon fill="#ffc82b" points="99.01 17 99.01 29.94 90.33 29.94 90.33 47.29 77.4 47.29 77.4 29.94 68.72 29.94 68.72 17 99.01 17" />
+      <polygon fill="#0a62bb" points="132.73 17 132.73 29.94 124.05 29.94 124.05 47.29 111.11 47.29 111.11 29.94 102.43 29.94 102.43 17 132.73 17" />
+    </svg>
+  );
+}
+
+// 조합형 심볼 (사이드 푸터·작은 자리용)
+function NottSymbol({ size = 28 }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="252 0 65.04 64.29"
+      width={size}
+      height={size}
+      role="img"
+      aria-label="nott symbol"
+    >
+      <rect fill="#ff595f" x="252.54" y="12.94" width="12.94" height="17.35" />
+      <polygon fill="#ff595f" points="283.37 0 283.37 30.29 270.43 30.29 270.43 12.94 265.48 12.94 265.48 0 283.37 0" />
+      <path fill="#02aa5e" d="M287.49,0v30.29h29.55V0h-29.55ZM305.03,18.03h-5.54v-5.78h5.54v5.78Z" />
+      <polygon fill="#ffc82b" points="283.32 34 283.32 46.94 274.64 46.94 274.64 64.29 261.7 64.29 261.7 46.94 253.03 46.94 253.03 34 283.32 34" />
+      <polygon fill="#0a62bb" points="317.04 34 317.04 46.94 308.36 46.94 308.36 64.29 295.42 64.29 295.42 46.94 286.74 46.94 286.74 34 317.04 34" />
+    </svg>
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+const companies = [
+  { id: "lg",      name: "LG",     logoText: "LG",      color: "#A50034", bg: "#FFF5F8" },
+  { id: "samsung", name: "삼성",   logoText: "SAMSUNG", color: "#1428A0", bg: "#F3F6FF" },
+  { id: "hyundai", name: "현대",   logoText: "HYUNDAI", color: "#002C5F", bg: "#F1F6FB" },
+  { id: "lotte",   name: "롯데",   logoText: "LOTTE",   color: "#E60012", bg: "#FFF3F4" },
+  { id: "hanwha",  name: "한화",   logoText: "HANWHA",  color: "#FF6600", bg: "#FFF6EE" },
+  { id: "sk",      name: "SK",     logoText: "SK",      color: "#EA002C", bg: "#FFF2F4" },
+  { id: "kt",      name: "KT",     logoText: "KT",      color: "#E60012", bg: "#FFF2F4" },
+  { id: "posco",   name: "포스코", logoText: "POSCO",   color: "#0072CE", bg: "#F0F7FF" },
+];
+
+const services = [
+  {
+    id: "llm",
+    pkg: "nott-llm",
+    name: "nott-llm",
+    tagline: "Easy LLM",
+    desc: "사내 문서, 업무 데이터, 프로젝트 지식을 연결하는 기본 LLM 모듈",
+    endpoint: "POST /api/llm/chat",
+    sample: { messages: [{ role: "user", content: "안녕" }] },
+  },
+  {
+    id: "slm",
+    pkg: "nott-slm",
+    name: "nott-slm",
+    tagline: "Easy SLM",
+    desc: "현장/내부망/저비용 환경에 붙이기 쉬운 경량 AI 모델 모듈",
+    endpoint: "POST /api/slm/chat",
+    sample: { prompt: "현장 점검 결과 요약" },
+  },
+  {
+    id: "stt",
+    pkg: "nott-stt",
+    name: "nott-stt",
+    tagline: "Easy STT",
+    desc: "회의록, 상담, 현장 음성을 텍스트로 바꾸는 음성인식 모듈",
+    endpoint: "POST /api/stt/transcribe",
+    sample: { audio: "<base64>", language: "ko" },
+  },
+  {
+    id: "rag",
+    pkg: "nott-rag",
+    name: "nott-rag",
+    tagline: "Easy RAG",
+    desc: "PDF, 문서, 매뉴얼 검색 기반 답변을 위한 RAG 모듈",
+    endpoint: "POST /api/rag/query",
+    sample: { query: "환불 규정", topK: 5 },
+  },
+  {
+    id: "ocr",
+    pkg: "nott-ocr",
+    name: "nott-ocr",
+    tagline: "Easy OCR",
+    desc: "계약서, 영수증, 공문, 이미지 속 텍스트 추출 모듈",
+    endpoint: "POST /api/ocr/extract",
+    sample: { image: "<base64>", fields: ["date", "amount"] },
+  },
+  {
+    id: "dashboard",
+    pkg: "nott-dashboard",
+    name: "nott-dashboard",
+    tagline: "Easy Dashboard",
+    desc: "고객사 컬러와 로고가 적용되는 운영 대시보드 모듈",
+    endpoint: "GET /api/dashboard/metrics",
+    sample: { range: "7d" },
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 생성 함수
+// ─────────────────────────────────────────────────────────────────────────────
+
+function makeSourceCode(company, service) {
+  const componentName =
+    service.id.charAt(0).toUpperCase() + service.id.slice(1) + "Preview";
+
+  return `// Generated by nott — Easy modules for every SI project
+// Package : ${service.pkg}
+// Client  : ${company.name} (${company.logoText})
+// Endpoint: ${service.endpoint}
+
+import React from "react";
+
+const API_ENDPOINT = "${service.endpoint}";
+
+export default function ${componentName}() {
+  const theme = {
+    company: "${company.name}",
+    logoText: "${company.logoText}",
+    primaryColor: "${company.color}",
+    background: "${company.bg}",
+    serviceName: "${service.name}",
+    serviceTagline: "${service.tagline}",
+    serviceDescription: "${service.desc}"
+  };
+
+  const callApi = async () => {
+    const [method, path] = API_ENDPOINT.split(" ");
+    const res = await fetch(path, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(${JSON.stringify(service.sample)})
+    });
+    return res.json();
+  };
+
+  return (
+    <main style={{ minHeight: "100vh", background: theme.background, padding: 40 }}>
+      <section style={{ maxWidth: 960, margin: "0 auto", background: "white", borderRadius: 24, padding: 32 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ color: theme.primaryColor, fontWeight: 800, fontSize: 22 }}>
+            {theme.logoText}
+          </div>
+          <div style={{ fontSize: 12, color: "#94a3b8" }}>powered by nott</div>
+        </div>
+
+        <h1 style={{ fontSize: 42, marginTop: 32, letterSpacing: "-0.02em" }}>
+          {theme.serviceName}
+        </h1>
+        <p style={{ fontSize: 14, color: theme.primaryColor, marginTop: 8, fontWeight: 700 }}>
+          {theme.serviceTagline}
+        </p>
+        <p style={{ fontSize: 18, color: "#64748b", marginTop: 20, lineHeight: 1.6 }}>
+          {theme.serviceDescription}
+        </p>
+
+        <div style={{ marginTop: 24, padding: 16, background: "#0f172a", color: "#e2e8f0", borderRadius: 12, fontFamily: "monospace", fontSize: 13 }}>
+          {API_ENDPOINT}
+        </div>
+
+        <button
+          onClick={callApi}
+          style={{
+            marginTop: 24,
+            background: theme.primaryColor,
+            color: "white",
+            border: 0,
+            borderRadius: 999,
+            padding: "14px 22px",
+            fontWeight: 700,
+            cursor: "pointer"
+          }}
+        >
+          Start with {theme.company}
+        </button>
+      </section>
+    </main>
+  );
+}
+`;
+}
+
+function makePackageJson(company, service) {
+  return JSON.stringify(
+    {
+      name: `${company.id}-${service.pkg}`,
+      private: true,
+      version: "0.1.0",
+      type: "module",
+      description: `${company.name} × ${service.name} starter (generated by nott)`,
+      scripts: {
+        dev: "vite",
+        build: "vite build",
+        preview: "vite preview",
+      },
+      dependencies: {
+        react: "^18.3.1",
+        "react-dom": "^18.3.1",
+      },
+      devDependencies: {
+        "@vitejs/plugin-react": "^4.3.1",
+        vite: "^5.3.0",
+      },
+    },
+    null,
+    2
+  );
+}
+
+function makeReadme(company, service) {
+  return `# ${company.id}-${service.pkg}
+
+> ${company.name} × ${service.name} starter — generated by **nott**.
+
+${service.desc}
+
+## Endpoint
+
+\`${service.endpoint}\`
+
+## Sample payload
+
+\`\`\`json
+${JSON.stringify(service.sample, null, 2)}
+\`\`\`
+
+## Run
+
+\`\`\`bash
+npm install
+npm run dev
+\`\`\`
+
+## Theme
+
+- Primary: \`${company.color}\`
+- Background: \`${company.bg}\`
+- Logo text: \`${company.logoText}\`
+
+---
+Generated on 2026-05-23 by nott (v3).
+`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Landing
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function NottEasyModulesLanding() {
+  const [step, setStep] = useState(1);
+  const [selectedCompany, setSelectedCompany] = useState(companies[0]);
+  const [selectedService, setSelectedService] = useState(services[0]);
+  const [busy, setBusy] = useState(false);
+
+  const generatedCode = useMemo(
+    () => makeSourceCode(selectedCompany, selectedService),
+    [selectedCompany, selectedService]
+  );
+
+  const downloadJsx = () => {
+    const blob = new Blob([generatedCode], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${selectedCompany.id}-${selectedService.pkg}.jsx`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadZip = async () => {
+    setBusy(true);
+    try {
+      const zip = new JSZip();
+      const folder = `${selectedCompany.id}-${selectedService.pkg}`;
+      zip.file(`${folder}/package.json`, makePackageJson(selectedCompany, selectedService));
+      zip.file(`${folder}/README.md`, makeReadme(selectedCompany, selectedService));
+      zip.file(`${folder}/src/App.jsx`, generatedCode);
+      zip.file(
+        `${folder}/src/main.jsx`,
+        `import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+`
+      );
+      zip.file(
+        `${folder}/index.html`,
+        `<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>${selectedCompany.name} × ${selectedService.name}</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+`
+      );
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${folder}-starter.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-950">
+      <header className="mx-auto max-w-7xl px-6 py-6">
+        <div className="flex items-center gap-3">
+          <NottLogo height={36} />
+        </div>
+        <div className="mt-2 text-sm text-slate-500">
+          Easy modules for every SI project
+        </div>
+      </header>
+
+      <main className="mx-auto grid max-w-7xl gap-6 px-6 pb-10 lg:grid-cols-[1fr_420px]">
+        <section className="rounded-[32px] bg-white p-6 shadow-sm md:p-10">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">
+              <Sparkles size={16} />
+              Minimal SI starter platform
+            </div>
+            <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight md:text-6xl">
+              반복 개발을 줄이고, 고객사별 AI 모듈을 바로 만든다.
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+              대기업 로고를 고르고, 서비스를 고르면, 해당 고객사 테마가 적용된 프리뷰와 소스코드를 바로 생성합니다.
+            </p>
+          </motion.div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            <StepCard
+              active={step === 1}
+              done={step > 1}
+              number="01"
+              title="고객사 선택"
+              desc="LG / 삼성 / 현대 / 롯데 / 한화 / SK / KT / 포스코"
+              onClick={() => setStep(1)}
+            />
+            <StepCard
+              active={step === 2}
+              done={step > 2}
+              number="02"
+              title="서비스 선택"
+              desc="nott-llm / slm / stt / rag / ocr / dashboard"
+              onClick={() => setStep(2)}
+            />
+            <StepCard
+              active={step === 3}
+              done={false}
+              number="03"
+              title="프리뷰 / 다운로드"
+              desc="테마 적용 화면 + 소스코드(zip)"
+              onClick={() => setStep(3)}
+            />
+          </div>
+
+          <div className="mt-8 rounded-[28px] border border-slate-200 p-5">
+            {step === 1 && (
+              <div>
+                <h2 className="text-2xl font-bold">고객사를 선택하세요</h2>
+                <div className="mt-5 grid gap-3 sm:grid-cols-3 md:grid-cols-4">
+                  {companies.map((company) => (
+                    <button
+                      key={company.id}
+                      onClick={() => {
+                        setSelectedCompany(company);
+                        setStep(2);
+                      }}
+                      className="rounded-2xl border p-5 text-left transition hover:-translate-y-1 hover:shadow-md"
+                      style={{
+                        borderColor:
+                          selectedCompany.id === company.id
+                            ? company.color
+                            : "#e2e8f0",
+                        background:
+                          selectedCompany.id === company.id
+                            ? company.bg
+                            : "white",
+                      }}
+                    >
+                      <div
+                        className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl text-sm font-black text-white"
+                        style={{ background: company.color }}
+                      >
+                        {company.name.slice(0, 2)}
+                      </div>
+                      <div className="font-bold">{company.name}</div>
+                      <div className="mt-1 text-xs text-slate-500">
+                        {company.logoText}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div>
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold">서비스를 선택하세요</h2>
+                    <p className="mt-1 text-slate-500">
+                      선택 고객사: {selectedCompany.name}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setStep(1)}
+                    className="rounded-full bg-slate-100 px-4 py-2 text-sm"
+                  >
+                    고객사 변경
+                  </button>
+                </div>
+                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                  {services.map((service) => (
+                    <button
+                      key={service.id}
+                      onClick={() => {
+                        setSelectedService(service);
+                        setStep(3);
+                      }}
+                      className="rounded-2xl border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-1 hover:shadow-md"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-lg font-bold">{service.name}</div>
+                          <div className="text-xs font-semibold text-slate-400">
+                            {service.tagline}
+                          </div>
+                        </div>
+                        <ArrowRight size={18} className="text-slate-400" />
+                      </div>
+                      <p className="mt-2 text-sm leading-6 text-slate-500">
+                        {service.desc}
+                      </p>
+                      <div className="mt-3 inline-block rounded-md bg-slate-900 px-2 py-1 font-mono text-[11px] text-slate-200">
+                        {service.endpoint}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div>
+                <div className="flex flex-wrap items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold">프리뷰 생성 완료</h2>
+                    <p className="mt-1 text-slate-500">
+                      {selectedCompany.name} · {selectedService.name} ·{" "}
+                      <span className="font-mono text-xs">
+                        {selectedService.endpoint}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setStep(2)}
+                      className="rounded-full bg-slate-100 px-4 py-2 text-sm"
+                    >
+                      서비스 변경
+                    </button>
+                    <button
+                      onClick={downloadJsx}
+                      className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 ring-1 ring-slate-200"
+                    >
+                      <Download size={16} />
+                      jsx만
+                    </button>
+                    <button
+                      onClick={downloadZip}
+                      disabled={busy}
+                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-white disabled:opacity-60"
+                      style={{ background: selectedCompany.color }}
+                    >
+                      <Package size={16} />
+                      {busy ? "생성 중…" : "Starter ZIP 다운로드"}
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-6 grid gap-5 lg:grid-cols-2">
+                  <PreviewCard
+                    company={selectedCompany}
+                    service={selectedService}
+                  />
+                  <CodeCard code={generatedCode} />
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <aside className="rounded-[32px] bg-slate-950 p-6 text-white shadow-sm">
+          <div className="flex items-center gap-2 text-slate-300">
+            <Eye size={18} />
+            Live Preview
+          </div>
+          <div className="mt-6 overflow-hidden rounded-[28px] bg-white text-slate-950">
+            <PreviewCard
+              company={selectedCompany}
+              service={selectedService}
+              compact
+            />
+          </div>
+          <div className="mt-6 rounded-3xl bg-white/5 p-5">
+            <div className="text-sm text-slate-400">Current Setup</div>
+            <div className="mt-3 space-y-3">
+              <InfoRow label="Company" value={selectedCompany.name} />
+              <InfoRow label="Service" value={selectedService.name} />
+              <InfoRow label="Package" value={selectedService.pkg} />
+              <InfoRow label="Endpoint" value={selectedService.endpoint} mono />
+              <InfoRow label="Theme" value={selectedCompany.color} mono />
+            </div>
+          </div>
+          <div className="mt-6 flex items-center justify-center gap-2 text-xs text-slate-500">
+            <NottSymbol size={20} />
+            <span>Easy AI for every SI · v3 (2026-05-23)</span>
+          </div>
+        </aside>
+      </main>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UI parts
+// ─────────────────────────────────────────────────────────────────────────────
+
+function StepCard({ active, done, number, title, desc, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-3xl border p-5 text-left transition ${
+        active
+          ? "border-slate-950 bg-slate-950 text-white"
+          : "border-slate-200 bg-slate-50 text-slate-950"
+      }`}
+    >
+      <div className="text-sm opacity-60">{number}</div>
+      <div className="mt-6 text-lg font-bold">{title}</div>
+      <div className="mt-2 text-sm opacity-70">{desc}</div>
+      {done && <div className="mt-4 text-xs opacity-60">완료</div>}
+    </button>
+  );
+}
+
+function PreviewCard({ company, service, compact = false }) {
+  return (
+    <div
+      className={`rounded-[28px] border border-slate-200 p-6 ${
+        compact ? "min-h-[440px]" : "min-h-[420px]"
+      }`}
+      style={{ background: company.bg }}
+    >
+      <div className="flex items-center justify-between">
+        <div
+          className="rounded-2xl px-4 py-3 text-sm font-black text-white"
+          style={{ background: company.color }}
+        >
+          {company.logoText}
+        </div>
+        <div className="rounded-full bg-white px-3 py-1 text-xs text-slate-500 shadow-sm">
+          {service.pkg}
+        </div>
+      </div>
+      <div className="mt-12">
+        <div className="text-sm font-bold" style={{ color: company.color }}>
+          {company.name} Preview
+        </div>
+        <h3 className="mt-3 text-4xl font-black tracking-tight">
+          {service.name}
+        </h3>
+        <p className="mt-1 text-sm font-semibold text-slate-500">
+          {service.tagline}
+        </p>
+        <p className="mt-4 text-base leading-7 text-slate-600">
+          {service.desc}
+        </p>
+        <div className="mt-5 inline-block rounded-md bg-slate-900 px-2 py-1 font-mono text-[11px] text-slate-100">
+          {service.endpoint}
+        </div>
+        <button
+          className="mt-6 block rounded-full px-5 py-3 text-sm font-bold text-white shadow-sm"
+          style={{ background: company.color }}
+        >
+          Start {service.name}
+        </button>
+      </div>
+      <div className="mt-10 grid grid-cols-3 gap-3">
+        {["API", "UI", "CODE"].map((item) => (
+          <div
+            key={item}
+            className="rounded-2xl bg-white p-4 text-center text-sm font-bold shadow-sm"
+          >
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CodeCard({ code }) {
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch (e) {
+      // 클립보드 권한 없을 때 무시
+    }
+  };
+  return (
+    <div className="rounded-[28px] border border-slate-200 bg-slate-950 p-5 text-white">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-sm text-slate-300">
+          <Code2 size={16} />
+          Generated Source
+        </div>
+        <button
+          onClick={copyCode}
+          className="rounded-full bg-white/10 px-3 py-1 text-xs"
+        >
+          Copy
+        </button>
+      </div>
+      <pre className="mt-4 max-h-[340px] overflow-auto rounded-2xl bg-black/30 p-4 text-xs leading-5 text-slate-300">
+        {code}
+      </pre>
+    </div>
+  );
+}
+
+function InfoRow({ label, value, mono = false }) {
+  return (
+    <div className="flex items-center justify-between border-b border-white/10 pb-3 text-sm">
+      <span className="text-slate-400">{label}</span>
+      <span className={`font-bold ${mono ? "font-mono text-xs" : ""}`}>
+        {value}
+      </span>
+    </div>
+  );
+}
