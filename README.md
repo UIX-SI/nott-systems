@@ -112,7 +112,8 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 // src/main.jsx
 // import App from "./nott_05_23.jsx";       // v1
 // import App from "./nott_05_23_v2.jsx";    // v2
-import App from "./nott_05_23_v3.jsx";       // v3 ← 현재
+// import App from "./nott_05_23_v3.jsx";    // v3
+import App from "./nott_05_23_v4.jsx";       // v4 ← 현재
 // import App from "./nott_05_24.jsx";       // 내일 버전
 ```
 
@@ -147,7 +148,16 @@ push 직후 GitHub Actions가 자동으로 빌드/배포를 시작합니다 (1~2
 
 ## Changelog
 
-### 2026-05-23 v3 (현재 활성)
+### 2026-05-23 v4 (현재 활성)
+- **디자인 절제 (톤다운)** — "랜딩 페이지"에서 "도구"로
+- 폰트 크기 전반적으로 한~두 단계 축소 (text-6xl → text-3xl 등)
+- font-black → font-semibold (강도 절제)
+- 둥근 모서리 정리 (rounded-[32px] → rounded-2xl/xl)
+- 패딩 정돈 (md:p-10 → p-6)
+- 사이드 패널 폭 420 → 340
+- 로고 헤더 크기 36 → 26
+
+### 2026-05-23 v3 (보존)
 - 신세계 / 카카오 / 네이버 제거 → **8개사**
 - 우상단 헤더 알약(서비스 리스트) 제거
 - **nott 로고 적용**: 헤더에 가로형 SVG, 사이드 푸터에 조합형 심볼

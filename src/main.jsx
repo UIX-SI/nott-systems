@@ -1,8 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-// import App from "./nott_05_23.jsx";      // v1 (2026-05-23) — 보존
-// import App from "./nott_05_23_v2.jsx";   // v2 (2026-05-23) — 보존: 고객사 11개 + endpoint + ZIP
-import App from "./nott_05_23_v3.jsx";      // v3 (2026-05-23) — 활성: 8개사 (신세계/카카오/네이버 제거) + 우상단 알약 제거
+// import App from "./nott_05_23.jsx";       // v1 (2026-05-23) — 보존
+// import App from "./nott_05_23_v2.jsx";    // v2 (2026-05-23) — 보존
+// import App from "./nott_05_23_v3.jsx";    // v3 (2026-05-23) — 보존
+import App from "./nott_05_23_v4.jsx";       // v4 (2026-05-23) — 활성: 디자인 절제 (폰트/패딩/모서리)
 import "./index.css";
 
 // nott — entry point
