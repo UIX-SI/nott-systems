@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 # nott — GitHub Pages 자동 배포
 # main 브랜치에 push 되면 Vite build 후 Pages로 배포합니다.
-# 결과 URL: https://uix-si.github.io/nott/
+# 결과 URL: https://nott.systems/  (custom domain, base /)
 
 on:
   push:

@@ -7,7 +7,7 @@
 대기업 로고를 고르고, 서비스를 고르면,  
 해당 고객사 테마가 적용된 프리뷰와 소스코드 세트가 바로 생성됩니다.
 
-[![Live demo](https://img.shields.io/badge/live-uix--si.github.io%2Fnott-0a62bb?style=flat-square)](https://uix-si.github.io/nott/)
+[![Live demo](https://img.shields.io/badge/live-nott.systems-0a62bb?style=flat-square)](https://nott.systems/)
 [![Stack](https://img.shields.io/badge/stack-Vite_%C2%B7_React_18_%C2%B7_Tailwind-02aa5e?style=flat-square)](#기술-스택)
 [![Status](https://img.shields.io/badge/status-WIP-ffc82b?style=flat-square)](#changelog)
 [![Owner](https://img.shields.io/badge/org-UIX--SI-ff595f?style=flat-square)](https://github.com/UIX-SI)
@@ -18,9 +18,9 @@
 
 ## 🌐 Live
 
-**👉 https://uix-si.github.io/nott/**
+**👉 https://nott.systems/**
 
-`main` 브랜치에 push 하면 GitHub Actions가 자동으로 빌드 → Pages 배포합니다.  
+`main` 브랜치에 push 하면 GitHub Actions가 자동으로 빌드 → Pages 배포합니다 (custom domain `nott.systems`, base `/`).  
 초기 1회만 GitHub Settings → Pages → Source를 **GitHub Actions** 로 바꿔주세요.
 
 ---
@@ -70,8 +70,8 @@ LG · 삼성 · 현대자동차 · 롯데 · 한화 · SK · 포스코 · 신한
 ## 🚀 Quick start
 
 ```bash
-git clone https://github.com/UIX-SI/nott.git
-cd nott
+git clone https://github.com/UIX-SI/nott-systems.git
+cd nott-systems
 npm install
 npm run dev          # http://localhost:5173
 ```
@@ -97,7 +97,7 @@ npm run preview
 ## Repo layout
 
 ```
-C:\Dev\nott\  (=  github.com/UIX-SI/nott)
+C:\Dev\nott-systems\  (=  github.com/UIX-SI/nott-systems)
 ├── .github\workflows\deploy.yml   ← GitHub Pages 자동 배포
 ├── package.json
 ├── vite.config.js                  ← base = "/nott/" (build 시)
@@ -187,20 +187,20 @@ import App from "./nott_06_06_v5.jsx";       // v9 ← 현재
 
 ## Git workflow
 
-GitHub: https://github.com/UIX-SI/nott
+GitHub: https://github.com/UIX-SI/nott-systems
 
 처음 한 번 (로컬 초기 셋업):
 
 ```powershell
-cd C:\Dev\nott
+cd C:\Dev\nott-systems
 Remove-Item -Recurse -Force .git -ErrorAction SilentlyContinue
 
 git init -b main
 git config user.name "Kelly"
 git config user.email "dev.cununa@gmail.com"
 git add .
-git commit -m "feat: nott v3 — Easy modules for every SI project"
-git remote add origin https://github.com/UIX-SI/nott.git
+git commit -m "feat: nott — Easy modules for every SI project"
+git remote add origin https://github.com/UIX-SI/nott-systems.git
 git push -u origin main
 ```
 

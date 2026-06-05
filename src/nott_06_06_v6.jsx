@@ -473,8 +473,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </div>
           </div>
           <div className="flex items-center gap-4 text-[11px] font-medium text-slate-400">
-            <a href="https://uix-si.github.io/nott/" className="hover:text-slate-700" target="_blank" rel="noreferrer">Live</a>
-            <a href="https://github.com/UIX-SI/nott" className="hover:text-slate-700" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="https://nott.systems/" className="hover:text-slate-700" target="_blank" rel="noreferrer">nott.systems</a>
+            <a href="https://github.com/UIX-SI/nott-systems" className="hover:text-slate-700" target="_blank" rel="noreferrer">GitHub</a>
             <span>Phase 1 · 6 Systems</span>
           </div>
         </div>
