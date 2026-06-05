@@ -501,32 +501,36 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* Sticky header — branding + download buttons (top) */}
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-slate-50/90 backdrop-blur">
+      {/* Sticky header — branding + download (top) */}
+      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/85 shadow-sm backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
-          <div>
+          <div className="flex items-center gap-3">
             <NottLogo height={24} />
-            <div className="mt-1 text-[11px] text-slate-500">Easy modules for every SI project</div>
+            <div className="hidden h-6 w-px bg-slate-200 sm:block" />
+            <div className="hidden text-[11px] font-medium leading-tight text-slate-500 sm:block">
+              Easy modules<br />for every SI project
+            </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="mr-1 hidden text-[11px] text-slate-500 sm:block">
+          <div className="flex items-center gap-2">
+            <span className="hidden items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600 md:inline-flex">
+              <span className="inline-block h-2 w-2 rounded-full" style={{ background: selectedCompany.tokens.primary }} />
               {selectedCompany.name} · {selectedService.name}
             </span>
             <button
               onClick={downloadJsx}
-              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold hover:border-slate-400"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
             >
-              <Download size={12} />
-              jsx
+              <Download size={13} />
+              .jsx
             </button>
             <button
               onClick={downloadZip}
               disabled={busy}
-              className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
+              className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-60"
               style={{ background: selectedCompany.tokens.primary, color: selectedCompany.tokens.onPrimary }}
             >
-              <Package size={12} />
-              {busy ? "…" : "Starter ZIP"}
+              <Package size={13} />
+              {busy ? "생성 중…" : "Starter ZIP 다운로드"}
             </button>
           </div>
         </div>
@@ -534,12 +538,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
       <main className="mx-auto max-w-6xl px-5 py-5">
         {/* Brand selector — always visible, click to switch instantly */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-4">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-sm font-semibold">고객사</h2>
-            <span className="text-[11px] text-slate-400">로고를 클릭하면 테마가 즉시 전환됩니다</span>
+            <h2 className="text-sm font-bold text-slate-800">고객사 선택</h2>
+            <span className="text-[11px] text-slate-400">클릭하면 테마가 즉시 전환됩니다</span>
           </div>
-          <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-8">
+          <div className="mt-3 grid grid-cols-4 gap-2.5 sm:grid-cols-8">
             {brands.map((company) => {
               const active = selectedCompany.id === company.id;
               return (
@@ -547,30 +551,36 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                   key={company.id}
                   onClick={() => setSelectedCompany(company)}
                   title={company.name}
-                  className="flex flex-col items-center gap-1.5 rounded-xl border p-2.5 transition hover:border-slate-400"
+                  className="group flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition hover:-translate-y-0.5 hover:shadow-md"
                   style={{
-                    borderColor: active ? company.tokens.border : "#e2e8f0",
+                    borderColor: active ? company.tokens.primary : "#e9edf2",
                     background: active ? company.tokens.surface : "white",
+                    boxShadow: active ? `0 6px 16px -8px ${company.tokens.primary}` : undefined,
                   }}
                 >
-                  <span className="flex h-7 items-center justify-center">
+                  <span className="flex h-8 items-center justify-center">
                     {company.logo ? (
                       <img
                         src={company.logo}
                         alt={company.name}
-                        className="object-contain"
-                        style={{ height: 20, width: "auto", maxWidth: 84 }}
+                        className="object-contain transition group-hover:scale-105"
+                        style={{ height: 22, width: "auto", maxWidth: 88 }}
                       />
                     ) : (
                       <span
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-bold"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[11px] font-bold"
                         style={{ background: company.tokens.primary, color: company.tokens.onPrimary }}
                       >
                         {company.name.slice(0, 2)}
                       </span>
                     )}
                   </span>
-                  <span className="truncate text-[11px] font-semibold">{company.name}</span>
+                  <span
+                    className="truncate text-[11px] font-semibold"
+                    style={{ color: active ? company.tokens.primary : "#334155" }}
+                  >
+                    {company.name}
+                  </span>
                 </button>
               );
             })}
@@ -579,52 +589,62 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
         {/* Modules (left, scrolls) + sticky preview (right) */}
         <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_360px]">
-          <section className="rounded-2xl border border-slate-200 bg-white p-5">
-            <h2 className="text-base font-semibold">모듈을 선택하세요</h2>
-            <p className="mt-0.5 text-xs text-slate-500">
-              클릭하면 우측 미리보기가 갱신되고 크게 보기 팝업이 열립니다. 모듈은 계속 추가됩니다.
-            </p>
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-base font-bold text-slate-800">모듈 선택</h2>
+              <span className="text-[11px] text-slate-400">카드를 클릭하면 미리보기 팝업이 열립니다</span>
+            </div>
 
             {modulesByCategory.map((cat) => (
-              <div key={cat.id} className="mt-4">
-                <div className="flex items-baseline gap-2">
-                  <h3 className="text-xs font-semibold text-slate-700">{cat.name}</h3>
+              <div key={cat.id} className="mt-5">
+                <div className="flex items-center gap-2">
+                  <span className="h-3.5 w-1 rounded-full" style={{ background: selectedCompany.tokens.primary }} />
+                  <h3 className="text-xs font-bold text-slate-700">{cat.name}</h3>
+                  <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">{cat.items.length}</span>
                   <span className="text-[11px] text-slate-400">{cat.desc}</span>
                 </div>
-                <div className="mt-2 grid gap-2 md:grid-cols-2">
+                <div className="mt-2.5 grid gap-2.5 md:grid-cols-2">
                   {cat.items.map((service) => {
                     const active = selectedService.id === service.id;
                     return (
                       <button
                         key={service.id}
                         onClick={() => { setSelectedService(service); setModalOpen(true); }}
-                        className="rounded-lg border p-4 text-left transition hover:border-slate-400"
+                        className="group rounded-xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                         style={{
-                          borderColor: active ? selectedCompany.tokens.border : "#e2e8f0",
+                          borderColor: active ? selectedCompany.tokens.primary : "#e9edf2",
                           background: active ? selectedCompany.tokens.surface : "white",
                         }}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div>
-                            <div className="text-sm font-semibold">{service.name}</div>
+                            <div className="text-sm font-bold text-slate-800">{service.name}</div>
                             <div className="text-[10px] font-mono text-slate-400">{service.tagline}</div>
                           </div>
-                          <ArrowRight size={14} className="text-slate-400" />
+                          <span
+                            className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition group-hover:translate-x-0.5"
+                            style={active ? { background: selectedCompany.tokens.primary, color: selectedCompany.tokens.onPrimary } : undefined}
+                          >
+                            <ArrowRight size={13} />
+                          </span>
                         </div>
                         <p className="mt-2 text-xs leading-5 text-slate-500">{service.desc}</p>
                         {service.kind === "api" ? (
-                          <div className="mt-2 inline-flex items-center gap-1.5">
-                            <span className="inline-block rounded bg-slate-900 px-1.5 py-0.5 font-mono text-[10px] text-slate-200">
+                          <div className="mt-2.5 inline-flex items-center gap-1.5">
+                            <span className="inline-block rounded-md bg-slate-900 px-1.5 py-0.5 font-mono text-[10px] text-slate-200">
                               {service.endpoint}
                             </span>
                             {service.chat && (
-                              <span className="inline-block rounded-full border border-slate-200 px-1.5 py-0.5 text-[10px] text-slate-500">
+                              <span
+                                className="inline-block rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
+                                style={{ background: selectedCompany.tokens.surface, color: selectedCompany.tokens.primary }}
+                              >
                                 chat
                               </span>
                             )}
                           </div>
                         ) : (
-                          <div className="mt-2 inline-block rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-500">
+                          <div className="mt-2.5 inline-block rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-500">
                             UI 컴포넌트
                           </div>
                         )}
@@ -667,6 +687,38 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <span>Easy modules for every SI · v9</span>
             </div>
           </aside>
+        </div>
+
+        {/* Bottom download CTA — reachable without scrolling back up */}
+        <div className="mt-4 flex flex-col items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row">
+          <div className="flex items-center gap-3">
+            <BrandMark company={selectedCompany} />
+            <span className="text-slate-300">·</span>
+            <div>
+              <div className="text-sm font-bold text-slate-800">{selectedService.name}</div>
+              <div className="text-[11px] text-slate-500">
+                {selectedService.endpoint ?? "UI 컴포넌트"} · 바로 실행 가능한 starter
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={downloadJsx}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              <Download size={13} />
+              .jsx
+            </button>
+            <button
+              onClick={downloadZip}
+              disabled={busy}
+              className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-60"
+              style={{ background: selectedCompany.tokens.primary, color: selectedCompany.tokens.onPrimary }}
+            >
+              <Package size={13} />
+              {busy ? "생성 중…" : "Starter ZIP 다운로드"}
+            </button>
+          </div>
         </div>
       </main>
 
