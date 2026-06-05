@@ -4,27 +4,26 @@ import {
   Download,
   ArrowRight,
   Code2,
-  Eye,
   Package,
   Send,
-  Maximize2,
   X,
+  Smartphone,
+  Monitor,
 } from "lucide-react";
 import { brands } from "./brand-tokens.js";
 import { modules, modulesByCategory } from "./catalog.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // nott — Easy modules for every SI project
-// Version: 2026-06-06 (v9)
+// Version: 2026-06-06 (v10)
 //
-// v8 → v9 변경점 (단일 페이지 레이아웃):
-//  - 3단계 위저드 제거 → 한 화면 구성
-//  - 상단: 고정 헤더 + 다운로드 버튼 (jsx / Starter ZIP)
-//  - 고객사 바: 8개 로고 항상 노출, 클릭 시 테마 즉시 전환
-//  - 좌측: 모듈 카탈로그(스크롤), 우측: 고정(sticky) 미리보기
-//  - 모듈 클릭 / "크게 보기" → 팝업 모달(미리보기 + 코드 + 다운로드)
+// v9 → v10 변경점 (실시간 모바일 미리보기):
+//  - 모듈 클릭 = 팝업 ❌ → 우측 미리보기 실시간 전환
+//  - 우측은 폰 디바이스 프레임(모바일 미리보기)
+//  - 폰의 "PC 버전 보기" 버튼 → PC(데스크탑) 화면을 팝업으로 (브라우저 크롬)
+//  - 선택 카드 글로우(그라데이션) 제거 — 과한 번짐 톤다운
 //
-// (이전) v8: 브랜드 로고 적용 · v7: 대화형 채팅 프리뷰
+// (이전) v9: 단일 페이지 레이아웃 · v8: 브랜드 로고 · v7: 채팅 프리뷰
 // ─────────────────────────────────────────────────────────────────────────────
 
 function NottLogo({ height = 26 }) {
@@ -551,11 +550,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                   key={company.id}
                   onClick={() => setSelectedCompany(company)}
                   title={company.name}
-                  className="group flex flex-col items-center gap-2 rounded-xl border-2 p-3 transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="group flex flex-col items-center gap-2 rounded-xl border p-3 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-sm"
                   style={{
                     borderColor: active ? company.tokens.primary : "#e9edf2",
                     background: active ? company.tokens.surface : "white",
-                    boxShadow: active ? `0 6px 16px -8px ${company.tokens.primary}` : undefined,
                   }}
                 >
                   <span className="flex h-8 items-center justify-center">
@@ -609,7 +607,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                     return (
                       <button
                         key={service.id}
-                        onClick={() => { setSelectedService(service); setModalOpen(true); }}
+                        onClick={() => setSelectedService(service)}
                         className="group rounded-xl border p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                         style={{
                           borderColor: active ? selectedCompany.tokens.primary : "#e9edf2",
@@ -659,32 +657,25 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <aside className="self-start rounded-2xl border border-slate-200 bg-slate-900 p-4 text-white lg:sticky lg:top-[76px]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-xs text-slate-300">
-                <Eye size={13} />
-                Live Preview
+                <Smartphone size={13} />
+                모바일 미리보기
               </div>
               <button
                 onClick={() => setModalOpen(true)}
-                className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] hover:bg-white/20"
+                className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-semibold hover:bg-white/20"
               >
-                <Maximize2 size={11} />
-                크게 보기
+                <Monitor size={11} />
+                PC 버전 보기
               </button>
             </div>
-            <div className="mt-3 overflow-hidden rounded-xl bg-white text-slate-900">
-              <PreviewCard company={selectedCompany} service={selectedService} compact />
-            </div>
-            <div className="mt-3 rounded-xl bg-white/5 p-3">
-              <div className="text-[11px] text-slate-400">Current Setup</div>
-              <div className="mt-2 space-y-2">
-                <InfoRow label="Company" value={selectedCompany.name} />
-                <InfoRow label="Module" value={selectedService.name} />
-                <InfoRow label="Type" value={selectedService.endpoint ?? "UI 컴포넌트"} mono />
-                <InfoRow label="Theme" value={selectedCompany.tokens.primary} mono />
-              </div>
+            <div className="mt-4">
+              <PhoneFrame>
+                <PreviewCard company={selectedCompany} service={selectedService} bare />
+              </PhoneFrame>
             </div>
             <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-slate-500">
               <NottSymbol size={14} />
-              <span>Easy modules for every SI · v9</span>
+              <span>Easy modules for every SI · v10</span>
             </div>
           </aside>
         </div>
@@ -759,7 +750,12 @@ function Modal({ company, service, code, busy, onDownloadJsx, onDownloadZip, onC
             <BrandMark company={company} />
             <span className="text-slate-300">·</span>
             <div>
-              <div className="text-sm font-semibold">{service.name}</div>
+              <div className="flex items-center gap-1.5 text-sm font-semibold">
+                {service.name}
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">
+                  <Monitor size={10} /> PC
+                </span>
+              </div>
               <div className="text-[10px] font-mono text-slate-400">{service.endpoint ?? "UI 컴포넌트"}</div>
             </div>
           </div>
@@ -790,8 +786,30 @@ function Modal({ company, service, code, busy, onDownloadJsx, onDownloadZip, onC
           </div>
         </div>
         <div className="grid gap-3 overflow-auto p-4 lg:grid-cols-2">
-          <PreviewCard company={company} service={service} />
+          <div className="overflow-hidden rounded-lg border border-slate-200">
+            <div className="flex items-center gap-1.5 border-b border-slate-200 bg-slate-100 px-3 py-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
+              <span className="ml-2 font-mono text-[10px] text-slate-400">{company.id}-{service.pkg}</span>
+            </div>
+            <PreviewCard company={company} service={service} bare />
+          </div>
           <CodeCard code={code} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Phone device frame for the always-on mobile preview.
+function PhoneFrame({ children }) {
+  return (
+    <div className="mx-auto w-full max-w-[300px]">
+      <div className="rounded-[2rem] border-[10px] border-slate-800 bg-slate-800 shadow-2xl">
+        <div className="relative overflow-hidden rounded-[1.4rem] bg-white">
+          <div className="absolute left-1/2 top-0 z-10 h-5 w-24 -translate-x-1/2 rounded-b-2xl bg-slate-800" />
+          <div className="h-[540px] overflow-y-auto">{children}</div>
         </div>
       </div>
     </div>
@@ -900,13 +918,13 @@ function ChatDemo({ tokens, module }) {
   );
 }
 
-function PreviewCard({ company, service, compact = false }) {
+function PreviewCard({ company, service, compact = false, bare = false }) {
   const { tokens } = company;
   const isApi = service.kind === "api";
   return (
     <div
-      className={`rounded-xl border border-slate-200 p-4 ${compact ? "min-h-[340px]" : "min-h-[320px]"}`}
-      style={{ background: tokens.surface, color: tokens.onSurface }}
+      className={bare ? "h-full p-4" : `rounded-xl border border-slate-200 p-4 ${compact ? "min-h-[340px]" : "min-h-[320px]"}`}
+      style={{ background: tokens.surface, color: tokens.onSurface, minHeight: bare ? "100%" : undefined }}
     >
       <div className="flex items-center justify-between">
         <BrandMark company={company} />
