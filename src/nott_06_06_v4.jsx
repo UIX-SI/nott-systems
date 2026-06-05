@@ -726,18 +726,18 @@ function StepCard({ active, done, number, title, desc, onClick }) {
   );
 }
 
-// Brand mark: real logo SVG if the brand provides one (company.logoSvg),
-// otherwise the themed text chip. Lets us drop in per-client logos later
-// without touching this component.
+// Brand mark: real logo image if the brand provides one (company.logo),
+// otherwise the themed [monogram + wordmark] lockup. Lets us drop in
+// per-client logos without touching this component.
 function BrandMark({ company }) {
   const { tokens } = company;
-  if (company.logoSvg) {
+  if (company.logo) {
     return (
-      <span
-        className="inline-flex items-center"
-        style={{ height: 22, color: tokens.primary }}
-        aria-label={company.name}
-        dangerouslySetInnerHTML={{ __html: company.logoSvg }}
+      <img
+        src={company.logo}
+        alt={company.name}
+        className="object-contain"
+        style={{ height: 22, width: "auto", maxWidth: 132 }}
       />
     );
   }

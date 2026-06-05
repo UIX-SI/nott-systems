@@ -124,7 +124,8 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
     ├── nott_06_06.jsx              ← v5 (보존, 테마 토큰화)
     ├── nott_06_06_v2.jsx           ← v6 (보존, 카탈로그 확장 + 실행형 starter)
     ├── nott_06_06_v3.jsx           ← v7 (보존, 대화형 프리뷰 + 채팅 starter)
-    └── nott_06_06_v4.jsx           ← v8 (현재 활성, 브랜드 로고 락업)
+    ├── nott_06_06_v4.jsx           ← v8 (현재 활성, 브랜드 로고)
+    └── assets\brands\              ← 고객사 로고 SVG (lg/samsung/lotte/hanwha/sk/posco/shinhan)
 ```
 
 ## 브랜드 토큰 (테마 시스템)
@@ -140,9 +141,14 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 | `onSurface` | `surface` 위 본문 텍스트 색              |
 | `border`    | 선택/활성 시 외곽선 컬러                  |
 
+`logo`(선택): 실제 브랜드 로고를 `src/assets/brands/`에서 import 한 SVG 에셋. 있으면
+라이브 프리뷰가 텍스트 워드마크 대신 진짜 로고를 렌더하고, 없으면 `[모노그램 + 워드마크]`
+락업으로 폴백합니다 (Vite가 base path까지 맞춰 URL 처리).
+
 ```js
 // 새 고객사 추가 = 이 배열에 한 줄 → 앱 UI·생성 starter 코드 자동 반영
-{ id: "newco", name: "뉴코", logoText: "NEWCO", tokens: tokens("#123456", "#F0F4FF") }
+// 로고가 있으면 import 후 logo: 필드에 연결 (없으면 생략 → 텍스트 락업)
+{ id: "newco", name: "뉴코", logoText: "NEWCO", logo: newcoLogo, tokens: tokens("#123456", "#F0F4FF") }
 ```
 
 생성되는 starter 코드도 이 토큰을 CSS 변수(`var(--brand-primary)` 등)로 받아 테마를 입힙니다.
@@ -213,6 +219,12 @@ push 직후 GitHub Actions가 자동으로 빌드/배포를 시작합니다 (1~2
 
 ## Changelog
 
+### 2026-06-06 v8.2 (실제 브랜드 로고 적용)
+- 고객사 로고 SVG 7종 추가 (`src/assets/brands/`) → 라이브 프리뷰에 실제 로고 렌더
+- `BrandMark`: `company.logo` 있으면 `<img>`로 로고, 없으면 텍스트 락업 폴백
+- 적용: LG(심볼) · 삼성 · 롯데 · 한화 · SK · 포스코 · 신한금융
+- **현대자동차**: 에셋 미제공 → 텍스트 락업 유지 (로고 받으면 한 줄로 추가)
+
 ### 2026-06-06 v8.1 (브랜드 구성 조정)
 - 고객사 교체: **KT → 신한금융** (금융권 대표성 · SI/AI/보안/업무자동화 수요 반영)
 - 라벨 명확화: **현대 → 현대자동차**
@@ -268,8 +280,10 @@ push 직후 GitHub Actions가 자동으로 빌드/배포를 시작합니다 (1~2
 
 ## License / Note
 
-데모에 표시되는 대기업 로고 텍스트와 컬러는 **시연 / 프리뷰 목적의 placeholder**입니다.  
-실제 영업/배포 시에는 각 사 BI 가이드를 따르고, 필요한 경우 별도 사용 허가를 받아 사용하세요.
+데모에 표시되는 대기업 **로고·심볼·컬러는 각 사의 상표(trademark)** 이며, 본 저장소에서는
+**시연 / 프리뷰 목적**으로만 사용합니다 (`src/assets/brands/`). 실제 영업/배포 시에는 각 사
+BI 가이드를 따르고, 필요한 경우 **별도 사용 허가**를 받아 사용하세요. 퍼블릭 배포 시 상표권
+문제가 우려되면 로고를 빼고 텍스트 락업(`logo` 미지정) 폴백으로 운영할 수 있습니다.
 
 <div align="center">
 <br/>
