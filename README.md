@@ -111,7 +111,7 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 │   ├── nott_logo_horizontal.svg    ← 가로형 (헤더용)
 │   └── nott_symbol.svg             ← 심볼 (favicon · 작은 자리)
 └── src\
-    ├── main.jsx                    ← v7 import
+    ├── main.jsx                    ← v8 import
     ├── index.css
     ├── brand-tokens.js             ← 고객사 브랜드 토큰 (single source of truth)
     ├── catalog.js                  ← 모듈 카탈로그 (AI + UI·업무, 카테고리/kind)
@@ -121,7 +121,8 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
     ├── nott_05_23_v4.jsx           ← v4 (보존)
     ├── nott_06_06.jsx              ← v5 (보존, 테마 토큰화)
     ├── nott_06_06_v2.jsx           ← v6 (보존, 카탈로그 확장 + 실행형 starter)
-    └── nott_06_06_v3.jsx           ← v7 (현재 활성, 대화형 프리뷰 + 채팅 starter)
+    ├── nott_06_06_v3.jsx           ← v7 (보존, 대화형 프리뷰 + 채팅 starter)
+    └── nott_06_06_v4.jsx           ← v8 (현재 활성, 브랜드 로고 락업)
 ```
 
 ## 브랜드 토큰 (테마 시스템)
@@ -174,8 +175,8 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 // import App from "./nott_05_23.jsx";       // v1
 // import App from "./nott_05_23_v2.jsx";    // v2
 // import App from "./nott_06_06.jsx";       // v5
-// import App from "./nott_06_06_v2.jsx";    // v6
-import App from "./nott_06_06_v3.jsx";       // v7 ← 현재
+// import App from "./nott_06_06_v3.jsx";    // v7
+import App from "./nott_06_06_v4.jsx";       // v8 ← 현재
 // import App from "./nott_06_07.jsx";       // 내일 버전
 ```
 
@@ -210,7 +211,12 @@ push 직후 GitHub Actions가 자동으로 빌드/배포를 시작합니다 (1~2
 
 ## Changelog
 
-### 2026-06-06 v7 (현재 활성)
+### 2026-06-06 v8 (현재 활성)
+- **브랜드 로고 락업** — 단색 칩 → `[브랜드색 모노그램] + 워드마크` 형태로 다듬음 (`BrandMark`)
+- 앱 프리뷰 + 생성 starter 헤더에 동일 적용 (상표 리스크 없는 안전 방식)
+- `company.logoSvg` 들어오면 락업 대신 실제 로고 SVG 자동 렌더 (drop-in)
+
+### 2026-06-06 v7 (보존)
 - **대화형 프리뷰** — chat 모듈(`llm`/`slm`/`rag`)의 "Start" 버튼 → 그 자리에서 테마 채팅 데모가 열림
 - 생성되는 starter도 단일 버튼 → **작동하는 채팅 UI** (`fetch` 호출 + 백엔드 없으면 mock 폴백)
 - 채팅 생성물도 실제 `npm install + vite build`로 검증
