@@ -36,6 +36,8 @@ export const modules = [
     desc: "사내 문서, 업무 데이터, 프로젝트 지식을 연결하는 기본 LLM 모듈",
     endpoint: "POST /api/llm/chat",
     sample: { messages: [{ role: "user", content: "안녕" }] },
+    chat: true,
+    greeting: "무엇을 도와드릴까요? 사내 문서·업무 데이터를 바탕으로 답해드립니다.",
   },
   {
     id: "slm",
@@ -47,6 +49,8 @@ export const modules = [
     desc: "현장/내부망/저비용 환경에 붙이기 쉬운 경량 AI 모델 모듈",
     endpoint: "POST /api/slm/chat",
     sample: { prompt: "현장 점검 결과 요약" },
+    chat: true,
+    greeting: "현장/내부망용 경량 모델입니다. 점검·요약 등을 물어보세요.",
   },
   {
     id: "stt",
@@ -69,6 +73,8 @@ export const modules = [
     desc: "PDF, 문서, 매뉴얼 검색 기반 답변을 위한 RAG 모듈",
     endpoint: "POST /api/rag/query",
     sample: { query: "환불 규정", topK: 5 },
+    chat: true,
+    greeting: "문서를 검색해 근거와 함께 답해드립니다. 무엇을 찾을까요?",
   },
   {
     id: "ocr",
