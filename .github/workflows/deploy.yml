@@ -38,6 +38,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # custom domain nott.systems serves at root → base must be "/"
+          NOTT_BASE: "/"
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
