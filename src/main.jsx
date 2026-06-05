@@ -8,7 +8,8 @@ import ReactDOM from "react-dom/client";
 // import App from "./nott_06_06_v2.jsx";    // v6 (2026-06-06) — 보존: 모듈 카탈로그 확장 + 실행형 starter
 // import App from "./nott_06_06_v3.jsx";    // v7 (2026-06-06) — 보존: 대화형 프리뷰 + 채팅 starter
 // import App from "./nott_06_06_v4.jsx";    // v8 (2026-06-06) — 보존: 브랜드 로고
-import App from "./nott_06_06_v5.jsx";       // v9~v10 (2026-06-06) — 활성: 단일 페이지 + 실시간 모바일 미리보기
+// import App from "./nott_06_06_v5.jsx";    // v9~v10 (2026-06-06) — 보존: 단일 페이지 + 실시간 모바일 미리보기
+import App from "./nott_06_06_v6.jsx";       // v11 (2026-06-06) — 활성: 실제 인프라 모듈 + PC 콘솔 미리보기
 import "./index.css";
 
 // nott — entry point

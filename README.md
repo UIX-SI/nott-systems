@@ -113,19 +113,15 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 │   ├── nott_logo_horizontal.svg    ← 가로형 (헤더용)
 │   └── nott_symbol.svg             ← 심볼 (favicon · 작은 자리)
 └── src\
-    ├── main.jsx                    ← v9 import
+    ├── main.jsx                    ← v11 import
     ├── index.css
     ├── brand-tokens.js             ← 고객사 브랜드 토큰 (single source of truth)
-    ├── catalog.js                  ← 모듈 카탈로그 (AI + UI·업무, 카테고리/kind)
-    ├── nott_05_23.jsx              ← v1 (보존)
-    ├── nott_05_23_v2.jsx           ← v2 (보존)
-    ├── nott_05_23_v3.jsx           ← v3 (보존)
-    ├── nott_05_23_v4.jsx           ← v4 (보존)
-    ├── nott_06_06.jsx              ← v5 (보존, 테마 토큰화)
-    ├── nott_06_06_v2.jsx           ← v6 (보존, 카탈로그 확장 + 실행형 starter)
-    ├── nott_06_06_v3.jsx           ← v7 (보존, 대화형 프리뷰 + 채팅 starter)
-    ├── nott_06_06_v4.jsx           ← v8 (보존, 브랜드 로고)
-    ├── nott_06_06_v5.jsx           ← v9 (현재 활성, 단일 페이지 레이아웃)
+    ├── catalog.js                  ← 모듈 카탈로그 (실제 인프라 6대 시스템)
+    ├── previews.jsx                ← 6개 시스템 PC/모바일 목업 (브랜드 테마)
+    ├── nott_05_23.jsx ~ _v4.jsx    ← v1~v4 (보존)
+    ├── nott_06_06.jsx ~ _v4.jsx    ← v5~v8 (보존)
+    ├── nott_06_06_v5.jsx           ← v9~v10 (보존, 단일 페이지 + 모바일 미리보기)
+    ├── nott_06_06_v6.jsx           ← v11 (현재 활성, 인프라 모듈 + PC 콘솔)
     └── assets\brands\              ← 고객사 로고 SVG (lg/samsung/lotte/hanwha/sk/posco/shinhan)
 ```
 
@@ -219,6 +215,14 @@ git push
 push 직후 GitHub Actions가 자동으로 빌드/배포를 시작합니다 (1~2분 소요).
 
 ## Changelog
+
+### 2026-06-06 v11 (실제 인프라 모듈 + PC 콘솔 미리보기)
+- 모듈 목록을 **실제 개발 중인 6대 스마트빌딩 시스템**으로 교체 ([nott-infra](https://nott-infra.vercel.app/) 기준)
+  — Super App(모바일) · Network/IoT · Monitoring · Safety · PMS · CMS/Kiosk
+- 미리보기를 **폼팩터별 디바이스**로: PC 콘솔(데스크탑 윈도우) / 모바일(폰), 모두 클라이언트 브랜드로 리스킨
+- 다운로드 버튼을 **우측 목업 패널 하단(검정 영역)** 으로 이동
+- **nott 푸터** 추가
+- [`src/previews.jsx`](src/previews.jsx) 신설 (6개 시스템 목업), 콘솔/앱 코드 생성기
 
 ### 2026-06-06 v10 (실시간 모바일 미리보기 + PC 팝업)
 - 모듈 클릭 = 팝업 ❌ → **우측 미리보기 실시간 전환**
