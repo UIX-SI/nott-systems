@@ -567,12 +567,23 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                         background:  selectedCompany.id === company.id ? company.tokens.surface : "white",
                       }}
                     >
-                      <div
-                        className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-[11px] font-bold"
-                        style={{ background: company.tokens.primary, color: company.tokens.onPrimary }}
-                      >
-                        {company.name.slice(0, 2)}
-                      </div>
+                      {company.logo ? (
+                        <div className="mb-4 flex h-9 items-center">
+                          <img
+                            src={company.logo}
+                            alt={company.name}
+                            className="object-contain"
+                            style={{ height: 28, width: "auto", maxWidth: 124 }}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-[11px] font-bold"
+                          style={{ background: company.tokens.primary, color: company.tokens.onPrimary }}
+                        >
+                          {company.name.slice(0, 2)}
+                        </div>
+                      )}
                       <div className="text-sm font-semibold">{company.name}</div>
                       <div className="mt-0.5 text-[11px] font-mono text-slate-400">{company.logoText}</div>
                     </button>
