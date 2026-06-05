@@ -31,14 +31,14 @@ function tokens(primary, surface, overrides = {}) {
 }
 
 export const brands = [
-  { id: "lg",      name: "LG",     logoText: "LG",      tokens: tokens("#A50034", "#FFF5F8") },
-  { id: "samsung", name: "삼성",   logoText: "SAMSUNG", tokens: tokens("#1428A0", "#F3F6FF") },
-  { id: "hyundai", name: "현대",   logoText: "HYUNDAI", tokens: tokens("#002C5F", "#F1F6FB") },
-  { id: "lotte",   name: "롯데",   logoText: "LOTTE",   tokens: tokens("#E60012", "#FFF3F4") },
-  { id: "hanwha",  name: "한화",   logoText: "HANWHA",  tokens: tokens("#FF6600", "#FFF6EE") },
-  { id: "sk",      name: "SK",     logoText: "SK",      tokens: tokens("#EA002C", "#FFF2F4") },
-  { id: "kt",      name: "KT",     logoText: "KT",      tokens: tokens("#E60012", "#FFF2F4") },
-  { id: "posco",   name: "포스코", logoText: "POSCO",   tokens: tokens("#0072CE", "#F0F7FF") },
+  { id: "lg",      name: "LG",         logoText: "LG",      tokens: tokens("#A50034", "#FFF5F8") },
+  { id: "samsung", name: "삼성",       logoText: "SAMSUNG", tokens: tokens("#1428A0", "#F3F6FF") },
+  { id: "hyundai", name: "현대자동차", logoText: "HYUNDAI", tokens: tokens("#002C5F", "#F1F6FB") },
+  { id: "lotte",   name: "롯데",       logoText: "LOTTE",   tokens: tokens("#E60012", "#FFF3F4") },
+  { id: "hanwha",  name: "한화",       logoText: "HANWHA",  tokens: tokens("#FF6600", "#FFF6EE") },
+  { id: "sk",      name: "SK",         logoText: "SK",      tokens: tokens("#EA002C", "#FFF2F4") },
+  { id: "posco",   name: "포스코",     logoText: "POSCO",   tokens: tokens("#0072CE", "#F0F7FF") },
+  { id: "shinhan", name: "신한금융",   logoText: "SHINHAN", tokens: tokens("#0046FF", "#EEF3FF") },
 ];
 
 export const brandsById = Object.fromEntries(brands.map((b) => [b.id, b]));

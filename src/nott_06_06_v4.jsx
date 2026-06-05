@@ -531,7 +531,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               done={step > 1}
               number="01"
               title="고객사 선택"
-              desc="LG / 삼성 / 현대 / 롯데 / 한화 / SK / KT / 포스코"
+              desc="LG / 삼성 / 현대차 / 롯데 / 한화 / SK / 포스코 / 신한금융"
               onClick={() => setStep(1)}
             />
             <StepCard
