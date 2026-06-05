@@ -96,12 +96,36 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 │   ├── nott_logo_horizontal.svg    ← 가로형 (헤더용)
 │   └── nott_symbol.svg             ← 심볼 (favicon · 작은 자리)
 └── src\
-    ├── main.jsx                    ← v3 import
+    ├── main.jsx                    ← v5 import
     ├── index.css
+    ├── brand-tokens.js             ← 고객사 브랜드 토큰 (single source of truth)
     ├── nott_05_23.jsx              ← v1 (보존)
     ├── nott_05_23_v2.jsx           ← v2 (보존)
-    └── nott_05_23_v3.jsx           ← v3 (현재 활성, 로고 적용)
+    ├── nott_05_23_v3.jsx           ← v3 (보존)
+    ├── nott_05_23_v4.jsx           ← v4 (보존)
+    └── nott_06_06.jsx              ← v5 (현재 활성, 테마 토큰화)
 ```
+
+## 브랜드 토큰 (테마 시스템)
+
+고객사 테마는 [`src/brand-tokens.js`](src/brand-tokens.js)가 **단일 진실 원천(SSOT)** 입니다.
+각 고객사는 임의의 color/bg가 아니라 **시맨틱 토큰 세트**로 정의됩니다.
+
+| Token       | 의미                                      |
+| ----------- | ----------------------------------------- |
+| `primary`   | 브랜드 시그니처 컬러 (버튼·강조·로고 칩)  |
+| `onPrimary` | `primary` 위에 올라가는 전경색 (텍스트)   |
+| `surface`   | 프리뷰 캔버스용 연한 틴트 배경            |
+| `onSurface` | `surface` 위 본문 텍스트 색              |
+| `border`    | 선택/활성 시 외곽선 컬러                  |
+
+```js
+// 새 고객사 추가 = 이 배열에 한 줄 → 앱 UI·생성 starter 코드 자동 반영
+{ id: "newco", name: "뉴코", logoText: "NEWCO", tokens: tokens("#123456", "#F0F4FF") }
+```
+
+생성되는 starter 코드도 이 토큰을 CSS 변수(`var(--brand-primary)` 등)로 받아 테마를 입힙니다.
+즉 "고객사 한 줄 추가 → 발급기 전체 반영"이 동작합니다.
 
 ## 파일 / 버전 규칙
 
@@ -113,8 +137,9 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 // import App from "./nott_05_23.jsx";       // v1
 // import App from "./nott_05_23_v2.jsx";    // v2
 // import App from "./nott_05_23_v3.jsx";    // v3
-import App from "./nott_05_23_v4.jsx";       // v4 ← 현재
-// import App from "./nott_05_24.jsx";       // 내일 버전
+// import App from "./nott_05_23_v4.jsx";    // v4
+import App from "./nott_06_06.jsx";          // v5 ← 현재
+// import App from "./nott_06_07.jsx";       // 내일 버전
 ```
 
 ## Git workflow
@@ -148,7 +173,13 @@ push 직후 GitHub Actions가 자동으로 빌드/배포를 시작합니다 (1~2
 
 ## Changelog
 
-### 2026-05-23 v4 (현재 활성)
+### 2026-06-06 v5 (현재 활성)
+- **테마 토큰화** — 고객사 컬러/로고를 [`src/brand-tokens.js`](src/brand-tokens.js)로 분리 (SSOT)
+- 하드코딩 `color`/`bg` → 시맨틱 토큰 `{primary, onPrimary, surface, onSurface, border}`
+- 생성되는 starter 코드가 **CSS 변수(`var(--brand-*)`) 기반**으로 테마 적용
+- 새 고객사 추가 = 토큰 한 줄 추가 → 앱·생성코드 자동 반영 (확장성의 핵심)
+
+### 2026-05-23 v4 (보존)
 - **디자인 절제 (톤다운)** — "랜딩 페이지"에서 "도구"로
 - 폰트 크기 전반적으로 한~두 단계 축소 (text-6xl → text-3xl 등)
 - font-black → font-semibold (강도 절제)
