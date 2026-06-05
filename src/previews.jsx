@@ -290,51 +290,92 @@ function KioskContent({ module, tokens }) {
 }
 
 function SuperAppScreen({ module, tokens }) {
+  const feed = [
+    { t: "Aqua Fitness Class", s: "10:00 · 6석 남음", c: tokens.primary },
+    { t: "Chef's Vietnamese Lunch", s: "12:30 · F&B 예약", c: "#2E7D32" },
+    { t: "단수 점검 공지", s: "14:00–15:00 · 12F", c: "#E65100" },
+  ];
   return (
-    <div className="flex h-full flex-col" style={{ background: tokens.surface }}>
-      <div className="px-4 pb-3 pt-4 text-white" style={{ background: tokens.primary }}>
-        <div className="flex items-center justify-between text-[9px] opacity-80">
+    <div className="flex h-full flex-col" style={{ background: "#f3f4f6" }}>
+      {/* app bar */}
+      <div className="px-4 pb-4 pt-2.5 text-white" style={{ background: tokens.primary }}>
+        <div className="flex items-center justify-between text-[9px] font-medium opacity-90">
           <span>9:41</span>
-          <span>5G ▮▮▮</span>
+          <span className="flex items-center gap-1">5G ▮▮▮ <span className="rounded-sm bg-white/30 px-1">100%</span></span>
         </div>
-        <div className="mt-2 flex items-center justify-between">
+        <div className="mt-2.5 flex items-center justify-between">
           <div>
-            <div className="text-sm font-bold">Good morning, Mai 👋</div>
-            <div className="text-[9px] opacity-80">Unit 1203 · Tower A · Resident</div>
+            <div className="text-[15px] font-bold leading-tight">Good morning, Mai 👋</div>
+            <div className="mt-1 flex items-center gap-1 text-[9px] opacity-90">
+              <span className="rounded-full bg-white/20 px-1.5 py-0.5 font-semibold">One ID</span>
+              Unit 1203 · Tower A
+            </div>
           </div>
           <div className="relative">
-            <span className="text-base">🔔</span>
-            <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white text-[7px] font-bold" style={{ color: tokens.primary }}>5</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-sm">🔔</div>
+            <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-white text-[7px] font-bold" style={{ color: tokens.primary }}>5</span>
           </div>
         </div>
       </div>
-      <div className="flex-1 space-y-2.5 overflow-auto p-3">
-        <div className="rounded-xl bg-white p-2 shadow-sm">
-          <div className="mb-1.5 text-[10px] font-bold">스마트홈</div>
+
+      <div className="-mt-3 flex-1 space-y-2.5 overflow-auto rounded-t-2xl px-3 pb-2 pt-3" style={{ background: "#f3f4f6" }}>
+        {/* smart home */}
+        <div className="rounded-2xl bg-white p-2.5 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="text-[11px] font-bold">스마트홈</div>
+            <span className="text-[8px] text-slate-400">Unit 1203</span>
+          </div>
           <div className="grid grid-cols-4 gap-1.5">
-            {module.extra.smart.map((s) => (
-              <div key={s.name} className="rounded-lg p-1.5 text-center" style={{ background: tokens.surface }}>
-                <div className="text-[9px] font-semibold">{s.name}</div>
-                <div className="text-[7px]" style={{ color: tokens.primary }}>{s.state}</div>
+            {module.extra.smart.map((s, i) => {
+              const on = i !== 0;
+              return (
+                <div key={s.name} className="rounded-xl p-1.5 text-center" style={{ background: on ? tokens.surface : "#f1f5f9" }}>
+                  <div className="mx-auto mb-1 h-5 w-5 rounded-lg" style={{ background: on ? tokens.primary : "#cbd5e1" }} />
+                  <div className="text-[8px] font-semibold text-slate-700">{s.name}</div>
+                  <div className="text-[7px]" style={{ color: on ? tokens.primary : "#94a3b8" }}>{s.state}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* quick services */}
+        <div className="rounded-2xl bg-white p-2.5 shadow-sm">
+          <div className="mb-2 text-[11px] font-bold">빠른 서비스</div>
+          <div className="grid grid-cols-3 gap-2">
+            {module.extra.services.map((s) => (
+              <div key={s} className="flex flex-col items-center gap-1">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl" style={{ background: tokens.surface }}>
+                  <div className="h-4 w-4 rounded" style={{ background: tokens.primary }} />
+                </div>
+                <div className="text-center text-[8px] font-medium text-slate-600">{s}</div>
               </div>
             ))}
           </div>
         </div>
-        <div className="rounded-xl bg-white p-2 shadow-sm">
-          <div className="mb-1.5 text-[10px] font-bold">빠른 서비스</div>
-          <div className="grid grid-cols-3 gap-1.5">
-            {module.extra.services.map((s) => (
-              <div key={s} className="flex h-12 flex-col items-center justify-center rounded-lg text-[8px] font-semibold text-slate-700" style={{ background: tokens.surface }}>
-                <span className="mb-0.5 inline-block h-4 w-4 rounded" style={{ background: tokens.primary }} />
-                {s}
+
+        {/* today feed */}
+        <div className="rounded-2xl bg-white p-2.5 shadow-sm">
+          <div className="mb-2 text-[11px] font-bold">오늘의 일정</div>
+          {feed.map((f) => (
+            <div key={f.t} className="mb-1.5 flex items-center gap-2 rounded-xl bg-slate-50 p-1.5 last:mb-0">
+              <span className="h-7 w-7 shrink-0 rounded-lg" style={{ background: f.c }} />
+              <div className="min-w-0">
+                <div className="truncate text-[9px] font-semibold text-slate-700">{f.t}</div>
+                <div className="text-[8px] text-slate-400">{f.s}</div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="flex items-center justify-around border-t border-slate-200 bg-white py-1.5">
+
+      {/* tab bar */}
+      <div className="flex items-center justify-around border-t border-slate-200 bg-white pb-2 pt-1.5">
         {module.menu.map((m, i) => (
-          <div key={m} className="text-[8px] font-semibold" style={{ color: i === 0 ? tokens.primary : "#94a3b8" }}>{m}</div>
+          <div key={m} className="flex flex-col items-center gap-0.5">
+            <div className="h-4 w-4 rounded" style={{ background: i === 0 ? tokens.primary : "#cbd5e1" }} />
+            <div className="text-[7px] font-semibold" style={{ color: i === 0 ? tokens.primary : "#94a3b8" }}>{m}</div>
+          </div>
         ))}
       </div>
     </div>

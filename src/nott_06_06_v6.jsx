@@ -7,14 +7,16 @@ import { ModuleDevice } from "./previews.jsx";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // nott — Easy modules for every SI project
-// Version: 2026-06-06 (v11)
+// Version: 2026-06-06 (v12)
 //
-// v10 → v11 변경점 (실제 인프라 모듈 + PC 콘솔 미리보기):
-//  - 모듈 목록을 실제 개발 중인 6대 스마트빌딩 시스템으로 교체 (nott-infra)
-//  - 미리보기를 폼팩터별 디바이스로: PC 콘솔(데스크탑 윈도우) / 모바일(폰)
-//  - 각 시스템을 클라이언트 브랜드 토큰으로 리스킨 (테마 발급)
-//  - 다운로드 버튼을 우측 목업 패널 "하단 검정 영역"으로 이동
-//  - nott 푸터 추가
+// v11 → v12 변경점:
+//  - 크게 보기 모달을 풀화면 대시보드로: PC 콘솔이 실제 풀스크린처럼 크게 렌더
+//  - 모달에 미리보기 ⇄ 소스코드 슬라이드 전환 (소스는 뒤에서 슬라이드인)
+//  - 슈퍼앱 모바일 목업 리뉴얼 (One ID · 배터리 · 스마트홈 on/off · 서비스 · 오늘의 일정 · 탭바)
+//
+// (v11) 모듈을 실제 개발 중인 6대 스마트빌딩 시스템으로 교체 (nott-infra)
+//  - 폼팩터별 디바이스(PC 콘솔/모바일 폰), 브랜드 리스킨
+//  - 다운로드 = 우측 목업 패널 하단 검정 영역 · nott 푸터
 // ─────────────────────────────────────────────────────────────────────────────
 
 function NottLogo({ height = 26 }) {
@@ -454,7 +456,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
             <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-slate-500">
               <NottSymbol size={14} />
-              <span>Easy modules for every SI · v11</span>
+              <span>Easy modules for every SI · v12</span>
             </div>
           </aside>
         </div>
@@ -493,8 +495,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   );
 }
 
-// Enlarged preview popup — device mockup + generated code + download.
+// Full-screen preview popup — device mockup at real scale, slide to source code.
 function Modal({ company, service, code, busy, onDownloadJsx, onDownloadZip, onClose }) {
+  const [view, setView] = useState("preview");
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -504,26 +507,34 @@ function Modal({ company, service, code, busy, onDownloadJsx, onDownloadZip, onC
   const isMobile = service.form === "mobile";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <div className="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-5" onClick={onClose}>
+      <div className="flex h-[90vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        {/* header */}
         <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-3">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md text-[10px] font-bold" style={{ background: company.tokens.primary, color: company.tokens.onPrimary }}>
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[10px] font-bold" style={{ background: company.tokens.primary, color: company.tokens.onPrimary }}>
               {company.name.slice(0, 2)}
             </span>
-            <div>
-              <div className="flex items-center gap-1.5 text-sm font-semibold">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 truncate text-sm font-semibold">
                 {service.name}
-                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">
                   {isMobile ? <Smartphone size={10} /> : <Monitor size={10} />}
                   {isMobile ? "Mobile" : "PC"}
                 </span>
               </div>
-              <div className="text-[10px] text-slate-400">{company.name} · {service.tagline}</div>
+              <div className="truncate text-[10px] text-slate-400">{company.name} · {service.tagline}</div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <button onClick={onDownloadJsx} className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold hover:border-slate-400">
+
+          {/* slide toggle: 미리보기 ⇄ 소스코드 */}
+          <div className="hidden shrink-0 rounded-lg bg-slate-100 p-0.5 text-xs font-semibold sm:inline-flex">
+            <button onClick={() => setView("preview")} className={`rounded-md px-3 py-1 transition ${view === "preview" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500"}`}>미리보기</button>
+            <button onClick={() => setView("code")} className={`rounded-md px-3 py-1 transition ${view === "code" ? "bg-white text-slate-800 shadow-sm" : "text-slate-500"}`}>&lt;/&gt; 소스</button>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button onClick={onDownloadJsx} className="hidden items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold hover:border-slate-400 sm:inline-flex">
               <Download size={12} />
               .jsx
             </button>
@@ -534,38 +545,49 @@ function Modal({ company, service, code, busy, onDownloadJsx, onDownloadZip, onC
               style={{ background: company.tokens.primary, color: company.tokens.onPrimary }}
             >
               <Package size={12} />
-              {busy ? "…" : "Starter ZIP"}
+              {busy ? "…" : "ZIP"}
             </button>
             <button onClick={onClose} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="닫기">
               <X size={16} />
             </button>
           </div>
         </div>
-        <div className="grid gap-4 overflow-auto bg-slate-50 p-5 lg:grid-cols-2">
-          <div className="flex items-start justify-center">
-            <ModuleDevice module={service} tokens={company.tokens} pc={520} mobile={560} />
+
+        {/* sliding track: preview (front) ⇄ code (behind) */}
+        <div className="relative flex-1 overflow-hidden bg-slate-100">
+          <div
+            className="flex h-full w-[200%] transition-transform duration-300 ease-out"
+            style={{ transform: view === "code" ? "translateX(-50%)" : "translateX(0)" }}
+          >
+            <div className="flex h-full w-1/2 items-start justify-center overflow-auto p-5">
+              <div className="w-full">
+                <ModuleDevice module={service} tokens={company.tokens} pc={600} mobile={600} />
+              </div>
+            </div>
+            <div className="h-full w-1/2 p-4">
+              <CodeCard code={code} fill />
+            </div>
           </div>
-          <CodeCard code={code} />
         </div>
       </div>
     </div>
   );
 }
 
-function CodeCard({ code }) {
+function CodeCard({ code, fill = false }) {
   const copyCode = async () => {
     try { await navigator.clipboard.writeText(code); } catch (e) {}
   };
   return (
-    <div className="flex flex-col rounded-xl border border-slate-200 bg-slate-900 p-3 text-white">
+    <div className={`flex flex-col rounded-xl border border-slate-200 bg-slate-900 p-3 text-white ${fill ? "h-full" : ""}`}>
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 text-xs text-slate-300">
           <Code2 size={12} />
-          Generated Source
+          Generated Source · {fill ? "src/App.jsx" : "preview"}
         </div>
         <button onClick={copyCode} className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] hover:bg-white/20">Copy</button>
       </div>
-      <pre className="mt-2 max-h-[480px] flex-1 overflow-auto rounded-lg bg-black/30 p-3 text-[10px] leading-4 text-slate-300">{code}</pre>
+      <pre className={`mt-2 flex-1 overflow-auto rounded-lg bg-black/30 p-3 text-[10px] leading-4 text-slate-300 ${fill ? "" : "max-h-[480px]"}`}>{code}</pre>
     </div>
   );
 }
