@@ -7,7 +7,8 @@ import ReactDOM from "react-dom/client";
 // import App from "./nott_06_06.jsx";       // v5 (2026-06-06) — 보존: 테마 토큰화 (brand-tokens.js)
 // import App from "./nott_06_06_v2.jsx";    // v6 (2026-06-06) — 보존: 모듈 카탈로그 확장 + 실행형 starter
 // import App from "./nott_06_06_v3.jsx";    // v7 (2026-06-06) — 보존: 대화형 프리뷰 + 채팅 starter
-import App from "./nott_06_06_v4.jsx";       // v8 (2026-06-06) — 활성: 브랜드 로고 락업
+// import App from "./nott_06_06_v4.jsx";    // v8 (2026-06-06) — 보존: 브랜드 로고
+import App from "./nott_06_06_v5.jsx";       // v9 (2026-06-06) — 활성: 단일 페이지 레이아웃
 import "./index.css";
 
 // nott — entry point

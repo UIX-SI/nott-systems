@@ -113,7 +113,7 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 │   ├── nott_logo_horizontal.svg    ← 가로형 (헤더용)
 │   └── nott_symbol.svg             ← 심볼 (favicon · 작은 자리)
 └── src\
-    ├── main.jsx                    ← v8 import
+    ├── main.jsx                    ← v9 import
     ├── index.css
     ├── brand-tokens.js             ← 고객사 브랜드 토큰 (single source of truth)
     ├── catalog.js                  ← 모듈 카탈로그 (AI + UI·업무, 카테고리/kind)
@@ -124,7 +124,8 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
     ├── nott_06_06.jsx              ← v5 (보존, 테마 토큰화)
     ├── nott_06_06_v2.jsx           ← v6 (보존, 카탈로그 확장 + 실행형 starter)
     ├── nott_06_06_v3.jsx           ← v7 (보존, 대화형 프리뷰 + 채팅 starter)
-    ├── nott_06_06_v4.jsx           ← v8 (현재 활성, 브랜드 로고)
+    ├── nott_06_06_v4.jsx           ← v8 (보존, 브랜드 로고)
+    ├── nott_06_06_v5.jsx           ← v9 (현재 활성, 단일 페이지 레이아웃)
     └── assets\brands\              ← 고객사 로고 SVG (lg/samsung/lotte/hanwha/sk/posco/shinhan)
 ```
 
@@ -183,8 +184,8 @@ C:\Dev\nott\  (=  github.com/UIX-SI/nott)
 // import App from "./nott_05_23.jsx";       // v1
 // import App from "./nott_05_23_v2.jsx";    // v2
 // import App from "./nott_06_06.jsx";       // v5
-// import App from "./nott_06_06_v3.jsx";    // v7
-import App from "./nott_06_06_v4.jsx";       // v8 ← 현재
+// import App from "./nott_06_06_v4.jsx";    // v8
+import App from "./nott_06_06_v5.jsx";       // v9 ← 현재
 // import App from "./nott_06_07.jsx";       // 내일 버전
 ```
 
@@ -218,6 +219,14 @@ git push
 push 직후 GitHub Actions가 자동으로 빌드/배포를 시작합니다 (1~2분 소요).
 
 ## Changelog
+
+### 2026-06-06 v9 (단일 페이지 레이아웃)
+- 3단계 위저드 제거 → **한 화면** 구성
+- 상단 고정 헤더에 **다운로드 버튼**(jsx / Starter ZIP) 상시 노출
+- **고객사 바**: 8개 로고 항상 노출, 클릭 시 테마 즉시 전환
+- 좌측 **모듈 카탈로그**(스크롤) + 우측 **고정(sticky) 미리보기**
+- 모듈 클릭 / "크게 보기" → **팝업 모달**(미리보기 + 생성 코드 + 다운로드, Esc·배경 클릭 닫기)
+- 미사용 `framer-motion` 제거로 JS 번들 387KB → 285KB
 
 ### 2026-06-06 v8.2 (실제 브랜드 로고 적용)
 - 고객사 로고 SVG 7종 추가 (`src/assets/brands/`) → 라이브 프리뷰에 실제 로고 렌더
