@@ -4,7 +4,8 @@ import ReactDOM from "react-dom/client";
 // import App from "./nott_05_23_v2.jsx";    // v2 (2026-05-23) — 보존
 // import App from "./nott_05_23_v3.jsx";    // v3 (2026-05-23) — 보존
 // import App from "./nott_05_23_v4.jsx";    // v4 (2026-05-23) — 보존: 디자인 절제 (폰트/패딩/모서리)
-import App from "./nott_06_06.jsx";          // v5 (2026-06-06) — 활성: 테마 토큰화 (brand-tokens.js)
+// import App from "./nott_06_06.jsx";       // v5 (2026-06-06) — 보존: 테마 토큰화 (brand-tokens.js)
+import App from "./nott_06_06_v2.jsx";       // v6 (2026-06-06) — 활성: 모듈 카탈로그 확장 + 실행형 starter
 import "./index.css";
 
 // nott — entry point
